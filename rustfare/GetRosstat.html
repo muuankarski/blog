@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Download data from Rosstat Regional Statistics</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for GetRosstat"><tr><td>GetRosstat</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Download data from Rosstat Regional Statistics</h2>
+
+<h3>Description</h3>
+
+<p>Download data based on indicator and aggregation level
+from Rosstat Regional Statistics
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+  GetRosstat(indicator = "mortality_rate",
+    level = "federal_district")
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>indicator</code></td>
+<td>
+<p>Character string. Select indicator from
+the <code>indicator</code> column of data frame returned by
+function <code>RosstatIndicator</code>. More than one indicator
+is NOT allowed.</p>
+</td></tr>
+<tr valign="top"><td><code>level</code></td>
+<td>
+<p>Character string. Defines the administrative
+level of aggregation </p>
+ <ul>
+<li> <p><code>federal</code> at
+the federal level </p>
+</li>
+<li> <p><code>federal_district</code> at the
+federal district level (8 regions) </p>
+</li>
+<li> <p><code>region</code> at
+the regional level (83 regions) </p>
+</li></ul>
+<p> More than one level is
+NOT allowed.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>data frame with 7 columns </p>
+ <ul>
+<li> <p><code>region</code>
+Region name in Russian </p>
+</li>
+<li> <p><code>region_en</code> Region name
+in English </p>
+</li>
+<li> <p><code>year</code> Year of observation </p>
+</li>
+<li>
+<p><code>value</code> Value of the indicator </p>
+</li>
+<li> <p><code>level</code>
+Aggregation level </p>
+</li>
+<li> <p><code>id_shape</code> id number for
+mergin with shapefile from GADM </p>
+</li>
+<li> <p><code>indicator</code>
+name of the indicator </p>
+</li></ul>
+
+
+
+<h3>Author(s)</h3>
+
+<p>Markus Kainu &lt;markuskainu(at)gmail.com&gt;
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# dat &lt;- GetRosstat("life_expectancy_men","federal_district")
+</pre>
+
+
+</body></html>

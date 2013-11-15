@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Download data from OECD Country statistical profile: Russian...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for GetOecd"><tr><td>GetOecd</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Download data from OECD Country statistical profile: Russian Federation</h2>
+
+<h3>Description</h3>
+
+<p>Download data from OECD Country statistical profile:
+Russian Federation
+<a href="http://www.oecd-ilibrary.org/economics/country-statistical-profile-russian-federation_20752288-table-rus">http://www.oecd-ilibrary.org/economics/country-statistical-profile-russian-federation_20752288-table-rus</a>
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+  GetOecd(measure = "public_expenditure_on_health")
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>indicator</code></td>
+<td>
+<p>Character string. Select indicator from
+the <code>indicator</code> column of data frame returned by
+function <code>OecdIndicator</code>. More than one indicator is
+NOT allowed.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>data frame with 4 columns </p>
+ <ul>
+<li>
+<p><code>indicator</code> Name of the indicator </p>
+</li>
+<li> <p><code>unit</code>
+unit the indicator </p>
+</li>
+<li> <p><code>value</code> Value of the
+indicator </p>
+</li>
+<li> <p><code>year</code> Year of observation </p>
+</li></ul>
+
+
+
+<h3>Author(s)</h3>
+
+<p>Markus Kainu &lt;markuskainu(at)gmail.com&gt;
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# dat &lt;- GetOecd("public_expenditure_on_health")
+</pre>
+
+
+</body></html>

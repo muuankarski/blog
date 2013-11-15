@@ -45,7 +45,7 @@ And it has values and labels as:
 <td>1</td><td>yes</td>
 <tr>
 <tr>
-<td>1</td><td>no</td>
+<td>0</td><td>no</td>
 <tr>
 </table>
 </br>

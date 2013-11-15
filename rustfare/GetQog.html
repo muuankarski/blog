@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Download data from Quality of Governance data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for GetQog"><tr><td>GetQog</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Download data from Quality of Governance data</h2>
+
+<h3>Description</h3>
+
+<p>Download data from Quality of Governance data at
+<a href="http://www.qog.pol.gu.se/data/datadownloads/qogstandarddata/">http://www.qog.pol.gu.se/data/datadownloads/qogstandarddata/</a>
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+  GetQog(country = "Russia", indicator = "undp_hdi")
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>country</code></td>
+<td>
+<p>Character string. Name of the country</p>
+</td></tr>
+<tr valign="top"><td><code>indicator</code></td>
+<td>
+<p>Character string. Select indicator from
+the <code>indicator</code> column of data frame returned by
+function <code>QogIndicator()</code>. More than one country or
+indicator is allowed using
+<code>c("indicator1","indicator2")</code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>data frame with 4 columns </p>
+ <ul>
+<li> <p><code>cname</code>
+Country name </p>
+</li>
+<li> <p><code>year</code> Year of observation </p>
+</li>
+<li>
+<p><code>indicator</code> Name of the indicator </p>
+</li>
+<li>
+<p><code>value</code>Value of the indicator </p>
+</li></ul>
+
+
+
+<h3>Author(s)</h3>
+
+<p>Markus Kainu &lt;markuskainu(at)gmail.com&gt;
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# dat &lt;- GetQog(country = c("Russia", "China"), indicator = c("undp_hdi", "fh_polity2"))
+</pre>
+
+
+</body></html>
