@@ -1,0 +1,31 @@
+---
+layout: post
+title:  "rustfare in action!"
+date:   2013-08-04 11:53:45
+categories: R-project
+---
+
+# Title
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{rrossplot}
+library(rustfare)
+library(ggplot2)
+
+dat <- GetRosstat("infant_mortality_rate", "federal_district")
+
+ggplot(dat, aes(x = year, y = value, color = region_en)) + geom_point() + geom_line() + 
+    geom_text(data = subset(dat, year == 2010), aes(x = year, y = value, color = region_en, 
+        label = region_en), size = 3, hjust = 1) + theme(legend.position = "none")
+```
+
+
+
+
+[jekyll-gh]: https://github.com/mojombo/jekyll
+[jekyll]:    http://jekyllrb.com

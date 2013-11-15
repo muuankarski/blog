@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Set this to the main language of your site -->
+<head>
+	<!-- Define the page charset to be utf-8 -->
+	<meta charset="utf-8" />
+	
+    <title>rustfare Markus Kainu</title>
+	
+	<!-- Enter a brief description of your page -->
+	<meta name="description" content="">
+	
+	<!-- Define a viewport to mobile devices to use - telling the browser to assume that the page is as wide as the device (width=device-width) and setting the initial page zoom level to be 1 (initial-scale=1.0) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Atom Feed -->
+    <link href="/blog/feed.xml" rel="alternate" title="Markus Kainu's Blog Post Feed" type="application/atom+xml">
+	
+	<!-- Add normalize.css which enables browsers to render all elements more consistently and in line with modern standards as it only targets particular styles that need normalizing -->
+	<link href="/css/normalize.css" rel="stylesheet" media="all" />
+
+    <!-- Add bootstrap which makes everything better -->
+    <link href="/css/readable-bootstrap.min.css" rel="stylesheet" media="all" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <!-- Stylesheet for Pygments highlighting -->
+    <link href="/css/pygments.css" rel="stylesheet" media="all" />
+
+    <!-- Include the site stylesheet -->
+	<link href="/css/styles.css" rel="stylesheet" media="all" />
+	
+	<!-- Include the HTML5 shiv and shiv print polyfills for Internet Explorer browsers 8 and below -->
+	<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js" media="all"></script>
+		<script src="/js/html5shiv-printshiv.js" media="print"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+    <div class="container">
+
+	<!-- The page header typically contains items such as your site heading, logo and possibly the main site navigation -->
+	<!-- ARIA: the landmark role "banner" is set as it is the prime heading or internal title of the page --> 
+	<header role="banner" class="subhead">
+	
+		<!-- ARIA: the landmark role "navigation" is added here as the element contains site navigation -->
+		<div class="subnav">
+			<!-- This can contain your site navigation either in an unordered list or even a paragraph that contains links that allow users to navigate your site -->
+            <ul class="nav nav-pills pull-right">
+                <li><a href="/rustfare/index.html">rustfare main</a></li>
+                <li><a href="/rustfare/index.html#examples-by-data-source">examples</a></li>
+                <li><a title="code" href="https://github.com/muuankarski/rustfare">
+                    <i class="icon-github"></i></a></li>
+                <li><a title="tweets" href="https://twitter.com/muuankarski">
+                    <i class="icon-twitter"></i></a></li>
+                <li><a title="email" href="mailto:markuskainu@gmail.com">
+                    <i class="icon-envelope"></i></a></li>
+            </ul>
+		</div>
+
+		<h3><a href="/">Markus Kainu</a></h3>	
+		
+	</header>
+	
+	<!-- If you want to use an element as a wrapper, i.e. for styling only, then <div> is still the element to use -->
+	<div class="wrap content shadow">
+
+<h1 style="text-align:left; font-size:22.5px">rustfare-package</h1>
+	
+        <div id="homepage">
+
+<section class="level2" id="examples-world-bank-world-development-indicators">
+<h2>Examples: World Bank World Development Indicators</h2>
+<p>As for <a href="http://data.worldbank.org/data-catalog/world-development-indicators">World Bank Development Indicators</a> rustfare relies on <a href="http://cran.r-project.org/web/packages/WDI/index.html">WDI-package</a> for which you can find examples here <a href="https://github.com/vincentarelbundock/WDI">github.com/vincentarelbundock/WDI</a>.</p>
+<p>With the following code you can plot GDP per capita (current US$) using log-scale from 1990 to 2011.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(WDI)
+<span class="kw">library</span>(ggplot2)
+<span class="co"># Search for GDP</span>
+<span class="kw">head</span>(<span class="kw">WDIsearch</span>(<span class="st">&#39;gdp&#39;</span>))</code></pre>
+<pre><code>##      indicator          
+## [1,] &quot;BG.GSR.NFSV.GD.ZS&quot;
+## [2,] &quot;BM.KLT.DINV.GD.ZS&quot;
+## [3,] &quot;BN.CAB.XOKA.GD.ZS&quot;
+## [4,] &quot;BN.CUR.GDPM.ZS&quot;   
+## [5,] &quot;BN.GSR.FCTY.CD.ZS&quot;
+## [6,] &quot;BN.KLT.DINV.CD.ZS&quot;
+##      name                                                                      
+## [1,] &quot;Trade in services (% of GDP)&quot;                                            
+## [2,] &quot;Foreign direct investment, net outflows (% of GDP)&quot;                      
+## [3,] &quot;Current account balance (% of GDP)&quot;                                      
+## [4,] &quot;Current account balance excluding net official capital grants (% of GDP)&quot;
+## [5,] &quot;Net income (% of GDP)&quot;                                                   
+## [6,] &quot;Foreign direct investment (% of GDP)&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># code for it NY.GDP.PCAP.CD</span>
+<span class="co"># dowload the data from 1990 to 2011</span>
+dat &lt;- <span class="kw">WDI</span>(<span class="dt">indicator=</span><span class="st">&#39;NY.GDP.PCAP.CD&#39;</span>, <span class="co"># indicator</span>
+           <span class="dt">country=</span><span class="st">&#39;RU&#39;</span>, <span class="co"># country/countries</span>
+           <span class="dt">start=</span><span class="dv">1990</span>, <span class="dt">end=</span><span class="dv">2011</span>) <span class="co"># time frame</span>
+dat$NY.GDP.PCAP.CD &lt;- <span class="kw">round</span>(dat$NY.GDP.PCAP.CD, <span class="dv">1</span>) <span class="co"># round the value to single decimal</span>
+<span class="kw">ggplot</span>(dat, <span class="kw">aes</span>(<span class="dt">x=</span>year,<span class="dt">y=</span>NY.GDP.PCAP.CD,
+                <span class="dt">group=</span>country,<span class="dt">label=</span>NY.GDP.PCAP.CD)) +
+  <span class="kw">geom_point</span>() + <span class="kw">geom_line</span>() + 
+  <span class="kw">geom_text</span>(<span class="dt">vjust=</span>-<span class="dv">1</span>, <span class="dt">size=</span><span class="dv">3</span>) +
+  <span class="kw">scale_y_log10</span>()</code></pre>
+<figure>
+<img src="figure/wbplot.png" alt="plot of chunk wbplot"><figcaption>plot of chunk wbplot</figcaption>
+</figure>
+</section>
+
+
+</div>
+
+
+
+
+
+		
+	</div>
+
+
+	
+	<!-- The main page footer can contain items such as copyright and contact information. It can also contain a duplicated navigation of your site which is not usually contained within a <nav> -->
+	<!-- ARIA: the landmark role "contentinfo" is added here as it contains metadata that applies to the parent document -->
+	<footer role="contentinfo" style="margin: 10px 5px;">
+
+        <small class="pull-right">With a little help from <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small> 
+
+		<!-- Copyright information can be contained within the <small> element. The <time> element is used here to indicate that the '2012' is a date -->
+		<small>Copyright &copy; <a href="http://markuskainu.fi">Markus Kainu</a> <time datetime="2013">2013</time></small>
+		
+	</footer>
+
+    </div>
+	
+	
+</body>
+</html>
+

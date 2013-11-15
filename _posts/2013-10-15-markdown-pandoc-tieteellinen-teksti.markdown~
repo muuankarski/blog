@@ -1,0 +1,56 @@
+---
+layout: post
+title:  "Markdown ja pandoc - tekstipohjaisen tieteellisen kirjoittamisen työvirta"
+date:   2013-10-15 10:53:45
+categories: tools
+---
+
+## Johdanto
+
+
+
+## Katse paperin tuolle puolen
+
+
+## Ohjelmistoympäristö
+
+  ```ruby
+---
+title:  'Esimerkkiteksti kirjoitettuna markdown-merkintäkielellä'
+author: Markus Kainu
+date: Lokakuu 2013
+affiliation: Turun yliopisto
+bibliography: bibtex.bib
+abstract:
+lang: finnish
+tags: [markdown, pandoc]
+...
+
+# Avoimet tutkimusmenetelmät yleisesti
+
+
+Uusi kappale @wiki_avoin_2013 sanoo tätä.
+
+
+## Avoimen koodin kehittyminen
+
+Avoimilla tutkimusmenetelmillä tarkoitetaan laskennallisia ohjelmointikieliä, joiden on lähdekoodi on avointa ja jotka on lisensointu vapaasti. Vapaan ja avoimen lähdekoodin ohjelmistokehityksen ideana on että kuka tahansa voi muokata lähdekoodia haluamallaan tavalla sekä kopioida ja levittää sekä alkuperäistä että muokattua versiota ja käyttää ohjelmaa mihin tahansa tarkoitukseen [@wiki_avoin_2013]. 
+
+  ```
+
+
+## Tieteellisen asiakirjan erityispiirteet
+
+### Lähdeviitteet
+
+
+### Luettelot
+
+
+## Output-formaatit
+
+
+
+
+[jekyll-gh]: https://github.com/mojombo/jekyll
+[jekyll]:    http://jekyllrb.com

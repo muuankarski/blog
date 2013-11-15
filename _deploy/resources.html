@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Set this to the main language of your site -->
+<head>
+	<!-- Define the page charset to be utf-8 -->
+	<meta charset="utf-8" />
+	
+    <title>Resources Markus Kainu</title>
+	
+	<!-- Enter a brief description of your page -->
+	<meta name="description" content="">
+	
+	<!-- Define a viewport to mobile devices to use - telling the browser to assume that the page is as wide as the device (width=device-width) and setting the initial page zoom level to be 1 (initial-scale=1.0) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Atom Feed -->
+    <link href="/blog/feed.xml" rel="alternate" title="Markus Kainu's Blog Post Feed" type="application/atom+xml">
+	
+	<!-- Add normalize.css which enables browsers to render all elements more consistently and in line with modern standards as it only targets particular styles that need normalizing -->
+	<link href="/css/normalize.css" rel="stylesheet" media="all" />
+
+    <!-- Add bootstrap which makes everything better -->
+    <link href="/css/readable-bootstrap.min.css" rel="stylesheet" media="all" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <!-- Stylesheet for Pygments highlighting -->
+    <link href="/css/pygments.css" rel="stylesheet" media="all" />
+
+    <!-- Include the site stylesheet -->
+	<link href="/css/styles.css" rel="stylesheet" media="all" />
+	
+	<!-- Include the HTML5 shiv and shiv print polyfills for Internet Explorer browsers 8 and below -->
+	<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js" media="all"></script>
+		<script src="/js/html5shiv-printshiv.js" media="print"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+    <div class="container">
+
+	<!-- The page header typically contains items such as your site heading, logo and possibly the main site navigation -->
+	<!-- ARIA: the landmark role "banner" is set as it is the prime heading or internal title of the page --> 
+	<header role="banner" class="subhead">
+	
+		<!-- ARIA: the landmark role "navigation" is added here as the element contains site navigation -->
+		<div class="subnav">
+			<!-- This can contain your site navigation either in an unordered list or even a paragraph that contains links that allow users to navigate your site -->
+            <ul class="nav nav-pills pull-right">
+                <li><a href="/blog/">blog</a></li>
+                <li><a href="/about.html">about</a></li>
+                <li><a href="/resources.html">resources</a></li>
+                <li><a title="code" href="http://github.com/muuankarski">
+                    <i class="icon-github"></i></a></li>
+                <li><a title="tweets" href="https://twitter.com/muuankarski">
+                    <i class="icon-twitter"></i></a></li>
+                <li><a title="email" href="mailto:markuskainu@gmail.com">
+                    <i class="icon-envelope"></i></a></li>
+            </ul>
+		</div>
+
+		<h3><a href="/">Markus Kainu</a></h3>	
+		
+	</header>
+	
+	<!-- If you want to use an element as a wrapper, i.e. for styling only, then <div> is still the element to use -->
+	<div class="wrap content shadow">
+	
+        <div id="homepage">
+
+<h1 style="text-align:left; font-size:22.5px">
+Resources
+</h1>
+
+<section class="level2" id="r-language">
+<h2>R-language</h2>
+<ul>
+<li><a href="/rustfare">rustfare-package</a> - <em>toolbox for R language for open welfare data from Russian Federation</em>
+<ul>
+<li><a href="http://ropengov.github.io/">ROpenGov</a> - <em>Future direction for rustfare-package</em></li>
+</ul></li>
+<li><a href="/karskitools">karskitools-package</a> - <em>Collection of functions to facilitate reproducible analysis with R, knitr and pandoc</em></li>
+<li><a href="/r-tutorial">personal code repository</a> - <em>miscellaneous R-code for statistical programming</em></li>
+</ul>
+</section>
+<section class="level2" id="open-science">
+<h2>Open Science</h2>
+<ul>
+<li><a href="http://research.muuankarski.org/tutorial/doku.php">Tietokone tutkijan työvälineenä</a></li>
+<li><a href="http://fi.okfn.org/wg/openscience/">Open science working group in Open knowledge Foundation Finland</a></li>
+</ul>
+</section>
+<section class="level2" id="presentation-slides">
+<h2>Presentation slides</h2>
+<ul>
+<li><a href="http://markuskainu.fi/workshop/openscience2013/openscience2013_slides.html#/">Open Science in the Digital Era - data, research and open access publishing - September 20, 2013</a></li>
+<li><a href="http://markuskainu.fi/workshop/openscience2013/openscience2013_slides_method.html#/">(My) Open Research Methods - September 20, 2013</a></li>
+<li><a href="http://markuskainu.fi/material/presentation/rustfare_slides.html#/">rustfaRe - A R-package for analysing Open Russian Welfare Data - Aleksanteri institute graduate school summer school 2013 Åland, June, 2013</a></li>
+<li><a href="http://research.muuankarski.org/rlms/papers/conference2013/slides/hseRlms2013Slides.html">Targeting performance of monthly cash payments at multidimensional poverty in Russia in 2000 - 2011. 18.5.2013, 1st RLMS conference in HSE Moscow</a></li>
+<li><a href="http://research.muuankarski.org/GDELT/slides/slides.html">Avoin data Venäjän ja Itä-Euroopan tutkimksessa 26.4.2013, Aleksanteri-instituutin maisterikoulun metodipaja</a></li>
+<li><a href="http://markuskainu.fi/material/presentation/tampere20121025.html">Welfare State theories and Russian Welfare State. 25.20.2012. Lecture at University of Tampere</a></li>
+<li><a href="http://markuskainu.fi/material/presentation/espanet2012/slides.html">Social Assistance and EU2020-poverty measure. 6.9.2012 At ESPAnet conference in Edinburgh</a></li>
+<li><a href="http://markuskainu.fi/material/presentation/reproducible_addis042012.pdf">Reproducible reports using R and MS Word. At Ethiopian Central Statistical Agency, Addis Ababa, 26.4.2012</a></li>
+</ul>
+</section>
+<section class="level2" id="workshops">
+<h2>Workshops</h2>
+<ul>
+<li><a href="http://markuskainu.fi/workshop/openscience2013">Open Science in the Digital Era - data, research and open access publishing</a>
+<ul>
+<li>The workshop tackles questions of open digital data, open methods, open access publishing and social media in reseach in social and humanitarian sciences. September 20, 2013</li>
+</ul></li>
+<li><a href="http://markuskainu.fi/workshop/digitalization">Everything was forever until it was no more</a>
+<ul>
+<li>Workshop on web-based research, publishing and teaching opportunities. March 22, 2013</li>
+</ul></li>
+<li><a href="http://markuskainu.fi/workshop/toistettava/">Oikotietä datasta julkaisuun (Shortcut from data to publication</a>
+<ul>
+<li>Research method workshop at <a href="http://www.utu.fi/fi/yksikot/soc/yksikot/sosiaalitieteet/tcwr/Sivut/home.aspx">Turku Center for Welfare Research</a> February 11.-12. 2013.</li>
+<li>Reproducible process for data analysis in quantitative social research using R, markdown and knitr.</li>
+</ul></li>
+<li><a href="http://research.muuankarski.org/tutorial/">Producing scientific papers in human sciences</a>
+<ul>
+<li>Text-editings skills for publication ready documents in MS Office and LibreOffice enviroments for bachelor-level students. From 2008 to 2011 at University of Turku</li>
+</ul></li>
+</ul>
+</section>
+
+
+</div>
+
+
+
+
+
+
+		
+	</div>
+
+
+	
+	<!-- The main page footer can contain items such as copyright and contact information. It can also contain a duplicated navigation of your site which is not usually contained within a <nav> -->
+	<!-- ARIA: the landmark role "contentinfo" is added here as it contains metadata that applies to the parent document -->
+	<footer role="contentinfo" style="margin: 10px 5px;">
+
+        <small class="pull-right">With a little help from <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small>
+
+		<!-- Copyright information can be contained within the <small> element. The <time> element is used here to indicate that the '2012' is a date -->
+		<small>Copyright &copy; <a href="http://markuskainu.fi">Markus Kainu</a> <time datetime="2013">2013</time></small>
+		
+	</footer>
+
+    </div>
+	
+	
+</body>
+</html>
+

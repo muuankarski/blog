@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Set this to the main language of your site -->
+<head>
+	<!-- Define the page charset to be utf-8 -->
+	<meta charset="utf-8" />
+	
+    <title>Mapping Finnish orienteers using R Markus Kainu</title>
+	
+	<!-- Enter a brief description of your page -->
+	<meta name="description" content="">
+	
+	<!-- Define a viewport to mobile devices to use - telling the browser to assume that the page is as wide as the device (width=device-width) and setting the initial page zoom level to be 1 (initial-scale=1.0) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Atom Feed -->
+    <link href="/blog/feed.xml" rel="alternate" title="Markus Kainu's Blog Post Feed" type="application/atom+xml">
+	
+	<!-- Add normalize.css which enables browsers to render all elements more consistently and in line with modern standards as it only targets particular styles that need normalizing -->
+	<link href="/css/normalize.css" rel="stylesheet" media="all" />
+
+    <!-- Add bootstrap which makes everything better -->
+    <link href="/css/readable-bootstrap.min.css" rel="stylesheet" media="all" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <!-- Stylesheet for Pygments highlighting -->
+    <link href="/css/pygments.css" rel="stylesheet" media="all" />
+
+    <!-- Include the site stylesheet -->
+	<link href="/css/styles.css" rel="stylesheet" media="all" />
+	
+	<!-- Include the HTML5 shiv and shiv print polyfills for Internet Explorer browsers 8 and below -->
+	<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js" media="all"></script>
+		<script src="/js/html5shiv-printshiv.js" media="print"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+    <div class="container">
+
+	<!-- The page header typically contains items such as your site heading, logo and possibly the main site navigation -->
+	<!-- ARIA: the landmark role "banner" is set as it is the prime heading or internal title of the page --> 
+	<header role="banner" class="subhead">
+	
+		<!-- ARIA: the landmark role "navigation" is added here as the element contains site navigation -->
+		<div class="subnav">
+			<!-- This can contain your site navigation either in an unordered list or even a paragraph that contains links that allow users to navigate your site -->
+            <ul class="nav nav-pills pull-right">
+                <li><a href="/blog/">blog</a></li>
+                <li><a href="/about.html">about</a></li>
+                <li><a href="/resources.html">resources</a></li>
+                <li><a title="code" href="http://github.com/muuankarski">
+                    <i class="icon-github"></i></a></li>
+                <li><a title="tweets" href="https://twitter.com/muuankarski">
+                    <i class="icon-twitter"></i></a></li>
+                <li><a title="email" href="mailto:markuskainu@gmail.com">
+                    <i class="icon-envelope"></i></a></li>
+            </ul>
+		</div>
+
+		<h3><a href="/">Markus Kainu</a></h3>	
+		
+	</header>
+	
+	<!-- If you want to use an element as a wrapper, i.e. for styling only, then <div> is still the element to use -->
+	<div class="wrap content shadow">
+	
+        <h1 class="pull-right"><small>Sunday - Oct 07, 2012</small></h1>
+
+<h1 class="post-title">Mapping Finnish orienteers using R</h1>
+
+<h2>Introduction</h2>
+
+<p>The code below can be used to map Finnish orienteers based on the home town of the club they are membering. Some documentation is provided within the code, but most of it is rather self-explanatory.</p>
+
+<p>As a conclusion one can say that the elite runners in mens class are highly concentrated into the top clubs. There are some alternatives clubs with few elite runners, eg. Vetelin Urheilijat. As a spatial representation this is misleading in a way that many of the runners in country teams do actually live in larger centers. Which is also the case with famous Vetelin Urheilijat</p>
+
+<p>In addition, top 100 in working age classes are the most regionally concentrated. A more detailed analysis can be done by tweaking the code, but this requires slightly more memory than what is currently available.</p>
+
+<h2>The Analysis</h2>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>XML<span class="p">)</span>
+library<span class="p">(</span>plyr<span class="p">)</span>
+library<span class="p">(</span>reshape2<span class="p">)</span>
+library<span class="p">(</span>ggplot2<span class="p">)</span>
+library<span class="p">(</span>stringr<span class="p">)</span>
+library<span class="p">(</span>gpclib<span class="p">)</span>
+library<span class="p">(</span>RColorBrewer<span class="p">)</span>
+library<span class="p">(</span>mapproj<span class="p">)</span>
+library<span class="p">(</span>maptools<span class="p">)</span>
+library<span class="p">(</span>rgdal<span class="p">)</span>
+library<span class="p">(</span>RJSONIO<span class="p">)</span>
+library<span class="p">(</span>car<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="r"><span class="c1">####################################</span>
+<span class="c1">#################################### </span>
+<span class="c1">#################################### rankidata ssl:n Irmasta</span>
+
+temp <span class="o">&lt;-</span> tempfile<span class="p">()</span>
+<span class="c1">#################################### Men h16</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=2800&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h16 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h16<span class="o">$</span>class<span class="p">[</span>df.h16<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h16&quot;</span>
+<span class="c1"># h18</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=2600&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h18 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h18<span class="o">$</span>class<span class="p">[</span>df.h18<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h18&quot;</span>
+<span class="c1"># h20</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=2500&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h20 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h20<span class="o">$</span>class<span class="p">[</span>df.h20<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h20&quot;</span>
+<span class="c1"># h21</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=1100&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h21 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h21<span class="o">$</span>class<span class="p">[</span>df.h21<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h21&quot;</span>
+<span class="c1"># h35</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=1200&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h35 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h35<span class="o">$</span>class<span class="p">[</span>df.h35<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h35&quot;</span>
+<span class="c1"># h40</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=1300&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h40 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h40<span class="o">$</span>class<span class="p">[</span>df.h40<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h40&quot;</span>
+<span class="c1"># h45</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=1400&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h45 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h45<span class="o">$</span>class<span class="p">[</span>df.h45<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h45&quot;</span>
+<span class="c1"># h50</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=1500&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h50 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h50<span class="o">$</span>class<span class="p">[</span>df.h50<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h50&quot;</span>
+<span class="c1"># h55</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=1600&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h55 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h55<span class="o">$</span>class<span class="p">[</span>df.h55<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h55&quot;</span>
+<span class="c1"># h60</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=1700&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h60 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h60<span class="o">$</span>class<span class="p">[</span>df.h60<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h60&quot;</span>
+<span class="c1"># h65</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=1800&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h65 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h65<span class="o">$</span>class<span class="p">[</span>df.h65<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h65&quot;</span>
+<span class="c1"># h70</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=1900&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h70 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h70<span class="o">$</span>class<span class="p">[</span>df.h70<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h70&quot;</span>
+<span class="c1"># h75</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=2000&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.h75 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.h75<span class="o">$</span>class<span class="p">[</span>df.h75<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;h75&quot;</span>
+
+df.h <span class="o">&lt;-</span> rbind<span class="p">(</span>df.h16<span class="p">,</span> df.h18<span class="p">,</span> df.h20<span class="p">,</span> df.h21<span class="p">,</span> df.h35<span class="p">,</span> df.h40<span class="p">,</span> df.h45<span class="p">,</span> df.h50<span class="p">,</span> 
+    df.h55<span class="p">,</span> df.h60<span class="p">,</span> df.h65<span class="p">,</span> df.h70<span class="p">,</span> df.h75<span class="p">)</span>
+df.h<span class="o">$</span>sex<span class="p">[</span>df.h<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;herr&quot;</span>
+
+<span class="c1">####################################</span>
+<span class="c1">#################################### </span>
+<span class="c1">#################################### Women d16</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=6800&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d16 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d16<span class="o">$</span>class<span class="p">[</span>df.d16<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d16&quot;</span>
+<span class="c1"># d18</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=6600&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d18 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d18<span class="o">$</span>class<span class="p">[</span>df.d18<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d18&quot;</span>
+<span class="c1"># d20</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=6500&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d20 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d20<span class="o">$</span>class<span class="p">[</span>df.d20<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d20&quot;</span>
+<span class="c1"># d21</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=5100&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d21 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d21<span class="o">$</span>class<span class="p">[</span>df.d21<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d21&quot;</span>
+<span class="c1"># d35</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=5200&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d35 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d35<span class="o">$</span>class<span class="p">[</span>df.d35<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d35&quot;</span>
+<span class="c1"># d40</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=5300&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d40 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d40<span class="o">$</span>class<span class="p">[</span>df.d40<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d40&quot;</span>
+<span class="c1"># d45</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=5400&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d45 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d45<span class="o">$</span>class<span class="p">[</span>df.d45<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d45&quot;</span>
+<span class="c1"># d50</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=5500&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d50 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d50<span class="o">$</span>class<span class="p">[</span>df.d50<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d50&quot;</span>
+<span class="c1"># d55</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=5600&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d55 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d55<span class="o">$</span>class<span class="p">[</span>df.d55<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d55&quot;</span>
+<span class="c1"># d60</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=5700&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d60 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d60<span class="o">$</span>class<span class="p">[</span>df.d60<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d60&quot;</span>
+<span class="c1"># d65</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=5800&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d65 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d65<span class="o">$</span>class<span class="p">[</span>df.d65<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d65&quot;</span>
+<span class="c1"># d70</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=5900&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d70 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d70<span class="o">$</span>class<span class="p">[</span>df.d70<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d70&quot;</span>
+<span class="c1"># d75</span>
+download.file<span class="p">(</span><span class="s">&quot;https://irma.suunnistusliitto.fi/irma/haku/ranki?id=6000&amp;laji=SUUNNISTUS&quot;</span><span class="p">,</span> 
+    destfile <span class="o">=</span> temp<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;curl&quot;</span><span class="p">)</span>
+df.d75 <span class="o">&lt;-</span> read.csv<span class="p">(</span>temp<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="p">,</span> skip <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+df.d75<span class="o">$</span>class<span class="p">[</span>df.d75<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;d75&quot;</span>
+
+df.d <span class="o">&lt;-</span> rbind<span class="p">(</span>df.d16<span class="p">,</span> df.d18<span class="p">,</span> df.d20<span class="p">,</span> df.d21<span class="p">,</span> df.d35<span class="p">,</span> df.d40<span class="p">,</span> df.d45<span class="p">,</span> df.d50<span class="p">,</span> 
+    df.d55<span class="p">,</span> df.d60<span class="p">,</span> df.d65<span class="p">,</span> df.d70<span class="p">,</span> df.d75<span class="p">)</span>
+df.d<span class="o">$</span>sex<span class="p">[</span>df.d<span class="o">$</span>Place <span class="o">&lt;</span> <span class="m">2000</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;damen&quot;</span>
+
+
+df <span class="o">&lt;-</span> rbind<span class="p">(</span>df.d<span class="p">,</span> df.h<span class="p">)</span>
+
+<span class="c1">####################################</span>
+<span class="c1">#################################### </span>
+<span class="c1">#################################### Next, we need a data file where</span>
+<span class="c1">#################################### clubnames are linked with town and</span>
+<span class="c1">#################################### their coordinates You can make the</span>
+<span class="c1">#################################### data, 1. by taking the list of clubs</span>
+<span class="c1">#################################### from here:</span>
+<span class="c1">#################################### https://irma.suunnistusliitto.fi/irma/public/club/list</span>
+<span class="c1">#################################### And, A good tutorial for making the</span>
+<span class="c1">#################################### geocoding can be found in here</span>
+<span class="c1">#################################### http://allthingsr.blogspot.fi/2012/01/geocode-your-data-using-r-json-and.html</span>
+<span class="c1">#################################### </span>
+<span class="c1">#################################### Here I&#39;m provind a link to a file</span>
+<span class="c1">#################################### Load a data, which structures as</span>
+<span class="c1">#################################### Town,Club,lat,long</span>
+
+df.loc <span class="o">&lt;-</span> read.csv<span class="p">(</span><span class="s">&quot;http://markuskainu.fi/data/blog/df.seura.loc.en.csv&quot;</span><span class="p">)</span>
+
+df.x <span class="o">&lt;-</span> join<span class="p">(</span>df<span class="p">,</span> df.loc<span class="p">,</span> by <span class="o">=</span> <span class="s">&quot;Club&quot;</span><span class="p">)</span>
+
+<span class="c1">####################################</span>
+<span class="c1">#################################### </span>
+<span class="c1">#################################### Suomen shapefile GADM-tietokannasta</span>
+library<span class="p">(</span>sp<span class="p">)</span>
+con <span class="o">&lt;-</span> url<span class="p">(</span><span class="s">&quot;http://gadm.org/data/rda/FIN_adm0.RData&quot;</span><span class="p">)</span>
+print<span class="p">(</span>load<span class="p">(</span>con<span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">## [1] &quot;gadm&quot;
+</code></pre></div>
+
+<div class="highlight"><pre><code class="r">close<span class="p">(</span>con<span class="p">)</span>
+
+<span class="c1"># shapefile into data.frame</span>
+gpclibPermit<span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">## [1] TRUE
+</code></pre></div>
+
+<div class="highlight"><pre><code class="r">gadm<span class="o">@</span>data<span class="o">$</span>id <span class="o">&lt;-</span> rownames<span class="p">(</span>gadm<span class="o">@</span>data<span class="p">)</span>
+gadm.points <span class="o">&lt;-</span> fortify<span class="p">(</span>gadm<span class="p">,</span> region <span class="o">=</span> <span class="s">&quot;id&quot;</span><span class="p">)</span>
+gadm.df <span class="o">&lt;-</span> merge<span class="p">(</span>gadm.points<span class="p">,</span> gadm<span class="o">@</span>data<span class="p">,</span> by <span class="o">=</span> <span class="s">&quot;id&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>Top 100 runners in H21-class</h2>
+
+<div class="highlight"><pre><code class="r"><span class="c1">###########################################</span>
+<span class="c1">###########################################</span>
+<span class="c1"># Kaikki yhdellä kartalla </span>
+df.x.h21 <span class="o">&lt;-</span> subset<span class="p">(</span>df.x<span class="p">,</span> class <span class="o">==</span> <span class="s">&#39;h21&#39;</span><span class="p">)</span>
+df.x.h21 <span class="o">&lt;-</span> subset<span class="p">(</span>df.x.h21<span class="p">,</span> Place <span class="o">&lt;</span> <span class="m">101</span><span class="p">)</span>
+
+cnames <span class="o">&lt;-</span> df.x.h21<span class="p">[</span><span class="o">-</span>which<span class="p">(</span>duplicated<span class="p">(</span>df.x.h21<span class="o">$</span>Club<span class="p">)),</span> <span class="p">]</span>
+
+ggplot<span class="p">(</span>gadm.df<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span>group<span class="o">=</span>group<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>fill<span class="o">=</span><span class="s">&quot;Azure 1&quot;</span><span class="p">,</span> color <span class="o">=</span> <span class="s">&quot;Dark Gray&quot;</span><span class="p">)</span> <span class="o">+</span> 
+  coord_map<span class="p">(</span>project<span class="o">=</span><span class="s">&quot;azequidistant&quot;</span><span class="p">)</span> <span class="o">+</span>
+  geom_point<span class="p">(</span>data<span class="o">=</span>df.x.h21<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span> group<span class="o">=</span>Club<span class="p">,</span> color<span class="o">=</span>Place<span class="p">),</span> size<span class="o">=</span><span class="m">3</span><span class="p">,</span> <span class="c1">#shape=1,</span>
+             position<span class="o">=</span>position_jitter<span class="p">(</span>width<span class="o">=</span><span class="m">.1</span><span class="p">,</span>height<span class="o">=</span><span class="m">.1</span><span class="p">))</span> <span class="o">+</span>
+  coord_map<span class="p">(</span>project<span class="o">=</span><span class="s">&quot;orthographic&quot;</span><span class="p">)</span> <span class="o">+</span> 
+  geom_text<span class="p">(</span>data<span class="o">=</span>cnames<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span> lat<span class="p">,</span> label <span class="o">=</span> Club<span class="p">,</span> group<span class="o">=</span>Club<span class="p">),</span> 
+            size<span class="o">=</span><span class="m">3</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span> hjust<span class="o">=</span><span class="m">0.5</span><span class="p">,</span> vjust<span class="o">=</span><span class="m">-2.0</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2012-10-07-mapping-finnish-orienteers/plot0.png" alt="center"> </p>
+
+<h2>Top 100 runners in all classes (16-75, men and women)</h2>
+
+<div class="highlight"><pre><code class="r"><span class="c1">###########################################</span>
+<span class="c1">########################################### </span>
+<span class="c1">########################################### Kaikki yhdellä kartalla</span>
+cnames <span class="o">&lt;-</span> df.x<span class="p">[</span><span class="o">-</span>which<span class="p">(</span>duplicated<span class="p">(</span>df.x<span class="o">$</span>Club<span class="p">)),</span> <span class="p">]</span>
+
+ggplot<span class="p">(</span>gadm.df<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span> lat<span class="p">,</span> group <span class="o">=</span> group<span class="p">))</span> <span class="o">+</span> geom_polygon<span class="p">(</span>fill <span class="o">=</span> <span class="s">&quot;Azure 1&quot;</span><span class="p">,</span> 
+    color <span class="o">=</span> <span class="s">&quot;Dark Gray&quot;</span><span class="p">)</span> <span class="o">+</span> coord_map<span class="p">(</span>project <span class="o">=</span> <span class="s">&quot;orthographic&quot;</span><span class="p">)</span> <span class="o">+</span> geom_point<span class="p">(</span>data <span class="o">=</span> df.x<span class="p">,</span> 
+    aes<span class="p">(</span>long<span class="p">,</span> lat<span class="p">,</span> group <span class="o">=</span> Club<span class="p">,</span> color <span class="o">=</span> Place<span class="p">),</span> size <span class="o">=</span> <span class="m">2</span><span class="p">,</span> shape <span class="o">=</span> <span class="m">1</span><span class="p">,</span> position <span class="o">=</span> position_jitter<span class="p">(</span>width <span class="o">=</span> <span class="m">0.1</span><span class="p">,</span> 
+        height <span class="o">=</span> <span class="m">0.1</span><span class="p">))</span> <span class="o">+</span> geom_text<span class="p">(</span>data <span class="o">=</span> cnames<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span> lat<span class="p">,</span> label <span class="o">=</span> Town<span class="p">,</span> 
+    group <span class="o">=</span> Town<span class="p">),</span> size <span class="o">=</span> <span class="m">3</span><span class="p">,</span> color <span class="o">=</span> <span class="s">&quot;black&quot;</span><span class="p">,</span> hjust <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> vjust <span class="o">=</span> <span class="m">-2</span><span class="p">,</span> family <span class="o">=</span> <span class="s">&quot;Russo One&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2012-10-07-mapping-finnish-orienteers/plot1.png" alt="center"> </p>
+
+<h2>Top 100 in each class by sex</h2>
+
+<div class="highlight"><pre><code class="r"><span class="c1"># Kunkin sarjan 100 parasta sukupuolittain</span>
+df.x.100 <span class="o">&lt;-</span> subset<span class="p">(</span>df.x<span class="p">,</span> Place <span class="o">&lt;</span> <span class="m">100</span><span class="p">)</span>
+
+ggplot<span class="p">(</span>gadm.df<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span>group<span class="o">=</span>group<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>fill<span class="o">=</span><span class="s">&quot;Azure 1&quot;</span><span class="p">,</span> color <span class="o">=</span> <span class="s">&quot;Dark Gray&quot;</span><span class="p">)</span> <span class="o">+</span> 
+  coord_map<span class="p">(</span>project<span class="o">=</span><span class="s">&quot;orthographic&quot;</span><span class="p">)</span> <span class="o">+</span>
+  geom_point<span class="p">(</span>data<span class="o">=</span>df.x.100<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span> group<span class="o">=</span>Club<span class="p">,</span> color<span class="o">=</span>Place<span class="p">),</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="c1">#shape=1,</span>
+             position<span class="o">=</span>position_jitter<span class="p">(</span>width<span class="o">=</span><span class="m">.1</span><span class="p">,</span>height<span class="o">=</span><span class="m">.1</span><span class="p">))</span> <span class="o">+</span>
+  facet_wrap<span class="p">(</span><span class="o">~</span>sex<span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2012-10-07-mapping-finnish-orienteers/plot2.png" alt="center"> </p>
+
+<h2>Top 100 in each classes faceted by sex and grouped class</h2>
+
+<div class="highlight"><pre><code class="r"><span class="c1"># Koukkupolvet vs. aikuiset vs. nuoret</span>
+df.x.100 <span class="o">&lt;-</span> subset<span class="p">(</span>df.x<span class="p">,</span> Place <span class="o">&lt;</span> <span class="m">100</span><span class="p">)</span>
+
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d16&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;1. junior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d18&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;1. junior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d20&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;1. junior&#39;</span>
+
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h16&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;1. junior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h18&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;1. junior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h20&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;1. junior&#39;</span>
+
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h21&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h35&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h40&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h45&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h50&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h55&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d21&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d35&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d40&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d45&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d50&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d55&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;2. work-age&#39;</span>
+
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h60&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;3. senior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h65&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;3. senior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h70&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;3. senior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;h75&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;3. senior&#39;</span>
+
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d60&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;3. senior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d65&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;3. senior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d70&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;3. senior&#39;</span>
+df.x.100<span class="o">$</span>cat<span class="p">[</span>df.x.100<span class="o">$</span>class <span class="o">==</span> <span class="s">&#39;d75&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&#39;3. senior&#39;</span>
+
+ggplot<span class="p">(</span>gadm.df<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span>group<span class="o">=</span>group<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>fill<span class="o">=</span><span class="s">&quot;Azure 1&quot;</span><span class="p">,</span> color <span class="o">=</span> <span class="s">&quot;Dark Gray&quot;</span><span class="p">)</span> <span class="o">+</span> 
+  coord_map<span class="p">(</span>project<span class="o">=</span><span class="s">&quot;orthographic&quot;</span><span class="p">)</span> <span class="o">+</span>
+  geom_point<span class="p">(</span>data<span class="o">=</span>df.x.100<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span> group<span class="o">=</span>Club<span class="p">,</span> color<span class="o">=</span>Place<span class="p">),</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="c1">#shape=1,</span>
+             position<span class="o">=</span>position_jitter<span class="p">(</span>width<span class="o">=</span><span class="m">.1</span><span class="p">,</span>height<span class="o">=</span><span class="m">.1</span><span class="p">))</span> <span class="o">+</span>
+  coord_map<span class="p">(</span>project<span class="o">=</span><span class="s">&quot;azequidistant&quot;</span><span class="p">)</span> <span class="o">+</span> facet_grid<span class="p">(</span>cat<span class="o">~</span>sex<span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2012-10-07-mapping-finnish-orienteers/plot3.png" alt="center"> </p>
+
+<h2>Conclusions</h2>
+
+<p>As concluding remarks one can say that this approach could proven rather fruitful when discussing the regional equality issues in organising major events. Further North you go the more expensive it becomes for the masses to show up. This can result non-participation  due to lack of financial or motivational resources.</p>
+
+
+<!--
+<small class="well" style="padding: 6px;">
+
+    Follow me on <a href="http://twitter.com/muuankarski">Twitter</a>.
+
+</small>
+-->
+
+<div style="margin: 15px 0; padding-top: 5px; border-top: 1px solid lightgray;">
+
+<small class="pull-right">
+    <a href="/blog/r-project/2012/10/30/reproducible-R-R2wd-word.html"
+    
+    >Reproducible reports using R, R2wd-package and MS Word &rarr;</a>
+</small>
+
+
+
+<small>
+    <a href="/blog/r-project/2012/09/25/google-docs-meeting-schedule.html" title="">&larr; Google Docs, R and ggplot2 for fixing meeting scedules</a>
+</small>
+
+
+</div>
+
+<!--
+<div style="font-size: 85%;">
+Related Posts:
+<ul>
+
+    <li><a href="/blog/r-project/2013/11/14/world-values-survey-on-map.html" title="">Visualising World Values Survey on a Map in R</a></li>
+
+    <li><a href="/blog/tools/2013/10/15/markdown-pandoc-tieteellinen-teksti.html" title="">Markdown ja pandoc - tekstipohjaisen tieteellisen kirjoittamisen työvirta</a></li>
+
+    <li><a href="/blog/r-project/2013/09/17/economic-history-dataset-in-r.html" title="">Maddison Project database in R</a></li>
+
+</ul>
+</div>
+-->
+
+<!--
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'joshbranchaud'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+-->
+
+
+ <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'markuskainuresearchblog'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+
+
+		
+	</div>
+
+
+	
+	<!-- The main page footer can contain items such as copyright and contact information. It can also contain a duplicated navigation of your site which is not usually contained within a <nav> -->
+	<!-- ARIA: the landmark role "contentinfo" is added here as it contains metadata that applies to the parent document -->
+	<footer role="contentinfo" style="margin: 10px 5px;">
+
+        <small class="pull-right">With a little help from <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small>
+
+		<!-- Copyright information can be contained within the <small> element. The <time> element is used here to indicate that the '2012' is a date -->
+		<small>Copyright &copy; <a href="http://markuskainu.fi">Markus Kainu</a> <time datetime="2013">2013</time></small>
+		
+	</footer>
+
+    </div>
+	
+	
+</body>
+</html>
+

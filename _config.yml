@@ -1,0 +1,9 @@
+name: markuskainu.fi
+title: Markus Kainu
+url: http://markuskainu.fi
+description: Social scientific research blog by Markus Kainu
+exclude: [/cache, komennot]
+markdown: redcarpet
+pygments: true
+destination: _deploy
+permalink: /blog/:categories/:year/:month/:day/:title.html

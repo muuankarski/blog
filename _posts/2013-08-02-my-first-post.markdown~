@@ -1,0 +1,18 @@
+---
+layout: post
+title:  "My first post!!"
+date:   2013-08-02 11:53:45
+categories: jekyll update
+---
+
+This is my first post with some [R-code](http://r-project.org)
+
+Jekyll also offers powerful support for code snippets:
+
+{% highlight r %}
+library(rustfare)
+data(cars)
+plot(cars)
+{% endhighlight %}
+
+

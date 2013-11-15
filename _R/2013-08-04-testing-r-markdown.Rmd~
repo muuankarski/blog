@@ -1,0 +1,45 @@
+---
+layout: post
+title:  "Testing R-markdown!"
+date:   2013-08-04 11:53:45
+categories: R-project
+---
+
+```{r, eval=FALSE, echo=FALSE}
+setwd("~/workspace/web/rmd")
+library(knitr)
+#file <- "write.your.Rnw.file.name.here"
+knit(input="file.Rmd",
+     output="../markuskainu/_posts/2013-08-04-testing-R-markdown.markdown")
+```
+
+```{roptions, echo=FALSE}
+opts_chunk$set(base.dir = "~/workspace/web/markuskainu/images/",
+               base.url = "images/")
+```
+
+
+
+
+Title
+========================================================
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages (click the **Help** toolbar button for more details on using R Markdown).
+
+When you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{rcarplot, fig.width=7, fig.height=6}
+plot(cars)
+```
+
+
+
+
+[jekyll-gh]: https://github.com/mojombo/jekyll
+[jekyll]:    http://jekyllrb.com

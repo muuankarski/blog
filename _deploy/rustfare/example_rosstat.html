@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Set this to the main language of your site -->
+<head>
+	<!-- Define the page charset to be utf-8 -->
+	<meta charset="utf-8" />
+	
+    <title>rustfare Markus Kainu</title>
+	
+	<!-- Enter a brief description of your page -->
+	<meta name="description" content="">
+	
+	<!-- Define a viewport to mobile devices to use - telling the browser to assume that the page is as wide as the device (width=device-width) and setting the initial page zoom level to be 1 (initial-scale=1.0) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Atom Feed -->
+    <link href="/blog/feed.xml" rel="alternate" title="Markus Kainu's Blog Post Feed" type="application/atom+xml">
+	
+	<!-- Add normalize.css which enables browsers to render all elements more consistently and in line with modern standards as it only targets particular styles that need normalizing -->
+	<link href="/css/normalize.css" rel="stylesheet" media="all" />
+
+    <!-- Add bootstrap which makes everything better -->
+    <link href="/css/readable-bootstrap.min.css" rel="stylesheet" media="all" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <!-- Stylesheet for Pygments highlighting -->
+    <link href="/css/pygments.css" rel="stylesheet" media="all" />
+
+    <!-- Include the site stylesheet -->
+	<link href="/css/styles.css" rel="stylesheet" media="all" />
+	
+	<!-- Include the HTML5 shiv and shiv print polyfills for Internet Explorer browsers 8 and below -->
+	<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js" media="all"></script>
+		<script src="/js/html5shiv-printshiv.js" media="print"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+    <div class="container">
+
+	<!-- The page header typically contains items such as your site heading, logo and possibly the main site navigation -->
+	<!-- ARIA: the landmark role "banner" is set as it is the prime heading or internal title of the page --> 
+	<header role="banner" class="subhead">
+	
+		<!-- ARIA: the landmark role "navigation" is added here as the element contains site navigation -->
+		<div class="subnav">
+			<!-- This can contain your site navigation either in an unordered list or even a paragraph that contains links that allow users to navigate your site -->
+            <ul class="nav nav-pills pull-right">
+                <li><a href="/rustfare/index.html">rustfare main</a></li>
+                <li><a href="/rustfare/index.html#examples-by-data-source">examples</a></li>
+                <li><a title="code" href="https://github.com/muuankarski/rustfare">
+                    <i class="icon-github"></i></a></li>
+                <li><a title="tweets" href="https://twitter.com/muuankarski">
+                    <i class="icon-twitter"></i></a></li>
+                <li><a title="email" href="mailto:markuskainu@gmail.com">
+                    <i class="icon-envelope"></i></a></li>
+            </ul>
+		</div>
+
+		<h3><a href="/">Markus Kainu</a></h3>	
+		
+	</header>
+	
+	<!-- If you want to use an element as a wrapper, i.e. for styling only, then <div> is still the element to use -->
+	<div class="wrap content shadow">
+
+<h1 style="text-align:left; font-size:22.5px">rustfare-package</h1>
+	
+        <div id="homepage">
+
+<section class="level2" id="examples-rosstat-regional-statistics">
+<h2>Examples: Rosstat regional statistics</h2>
+<p>Function <code>IndicatorRosstat()</code> returns a dataset with available indicators and metadata in Russian and English</p>
+<pre class="sourceCode r"><code class="sourceCode r">ind &lt;- <span class="kw">IndicatorRosstat</span>()
+ind[<span class="dv">1</span>:<span class="dv">3</span>, <span class="dv">1</span>:<span class="dv">3</span>]</code></pre>
+<p><a href="http://www.gks.ru/wps/wcm/connect/rosstat_main/rosstat/ru/statistics/publications/catalog/doc_1138623506156">Rosstat regional statistic</a> includes values of the indicators on three levels:</p>
+<ol type="1">
+<li>federal level</li>
+<li>federal district level</li>
+<li>regional level</li>
+</ol>
+<p>To dowload the data you may use <code>GetRosstat()</code>-function that requires two arguments,</p>
+<ol type="1">
+<li><code>indicator</code> (from the listing above),</li>
+<li><code>level</code> (federal/federal_district/region)</li>
+</ol>
+<p>The code below returns a dataset at <strong>federal district level</strong> on <strong>infant mortality</strong> and plots a line graph over time.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)  <span class="co"># load rustfare for obtaining the data</span>
+<span class="kw">library</span>(ggplot2)  <span class="co"># load ggplot2 for plotting</span>
+dat &lt;- <span class="kw">GetRosstat</span>(<span class="st">&quot;infant_mortality_rate&quot;</span>, <span class="st">&quot;federal_district&quot;</span>)
+<span class="kw">head</span>(dat, <span class="dv">3</span>)  <span class="co"># print the first 6 rows of data.frame</span></code></pre>
+<pre><code>##        id_name                               region year value
+## 1 дальневокруг Дальневосточный\r\nфедеральный округ 1995  20.5
+## 2 дальневокруг Дальневосточный\r\nфедеральный округ 2001  18.1
+## 3 дальневокруг Дальневосточный\r\nфедеральный округ 2000  18.6
+##                           region_ru                    region_en
+## 1 Дальневосточный федеральный округ Far Eastern Federal District
+## 2 Дальневосточный федеральный округ Far Eastern Federal District
+## 3 Дальневосточный федеральный округ Far Eastern Federal District
+##              level id_shape             indicator
+## 1 federal_district        4 infant_mortality_rate
+## 2 federal_district        4 infant_mortality_rate
+## 3 federal_district        4 infant_mortality_rate</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(dat, <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> value, <span class="dt">color =</span> region_en)) + <span class="kw">geom_point</span>() + <span class="kw">geom_line</span>() + 
+    <span class="kw">geom_text</span>(<span class="dt">data =</span> <span class="kw">subset</span>(dat, year == <span class="dv">2010</span>), <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> value, <span class="dt">color =</span> region_en, 
+        <span class="dt">label =</span> region_en), <span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">hjust =</span> <span class="dv">1</span>) + <span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre>
+<figure>
+<img src="figure/rosstat.png" alt="Infant mortality rates at federal district level"><figcaption>Infant mortality rates at federal district level</figcaption>
+</figure>
+</section>
+
+
+</div>
+
+
+
+
+
+		
+	</div>
+
+
+	
+	<!-- The main page footer can contain items such as copyright and contact information. It can also contain a duplicated navigation of your site which is not usually contained within a <nav> -->
+	<!-- ARIA: the landmark role "contentinfo" is added here as it contains metadata that applies to the parent document -->
+	<footer role="contentinfo" style="margin: 10px 5px;">
+
+        <small class="pull-right">With a little help from <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small> 
+
+		<!-- Copyright information can be contained within the <small> element. The <time> element is used here to indicate that the '2012' is a date -->
+		<small>Copyright &copy; <a href="http://markuskainu.fi">Markus Kainu</a> <time datetime="2013">2013</time></small>
+		
+	</footer>
+
+    </div>
+	
+	
+</body>
+</html>
+

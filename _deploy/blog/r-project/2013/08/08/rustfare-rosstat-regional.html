@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Set this to the main language of your site -->
+<head>
+	<!-- Define the page charset to be utf-8 -->
+	<meta charset="utf-8" />
+	
+    <title>rustfare-package and using Rosstat regional statistics Markus Kainu</title>
+	
+	<!-- Enter a brief description of your page -->
+	<meta name="description" content="">
+	
+	<!-- Define a viewport to mobile devices to use - telling the browser to assume that the page is as wide as the device (width=device-width) and setting the initial page zoom level to be 1 (initial-scale=1.0) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Atom Feed -->
+    <link href="/blog/feed.xml" rel="alternate" title="Markus Kainu's Blog Post Feed" type="application/atom+xml">
+	
+	<!-- Add normalize.css which enables browsers to render all elements more consistently and in line with modern standards as it only targets particular styles that need normalizing -->
+	<link href="/css/normalize.css" rel="stylesheet" media="all" />
+
+    <!-- Add bootstrap which makes everything better -->
+    <link href="/css/readable-bootstrap.min.css" rel="stylesheet" media="all" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <!-- Stylesheet for Pygments highlighting -->
+    <link href="/css/pygments.css" rel="stylesheet" media="all" />
+
+    <!-- Include the site stylesheet -->
+	<link href="/css/styles.css" rel="stylesheet" media="all" />
+	
+	<!-- Include the HTML5 shiv and shiv print polyfills for Internet Explorer browsers 8 and below -->
+	<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js" media="all"></script>
+		<script src="/js/html5shiv-printshiv.js" media="print"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+    <div class="container">
+
+	<!-- The page header typically contains items such as your site heading, logo and possibly the main site navigation -->
+	<!-- ARIA: the landmark role "banner" is set as it is the prime heading or internal title of the page --> 
+	<header role="banner" class="subhead">
+	
+		<!-- ARIA: the landmark role "navigation" is added here as the element contains site navigation -->
+		<div class="subnav">
+			<!-- This can contain your site navigation either in an unordered list or even a paragraph that contains links that allow users to navigate your site -->
+            <ul class="nav nav-pills pull-right">
+                <li><a href="/blog/">blog</a></li>
+                <li><a href="/about.html">about</a></li>
+                <li><a href="/resources.html">resources</a></li>
+                <li><a title="code" href="http://github.com/muuankarski">
+                    <i class="icon-github"></i></a></li>
+                <li><a title="tweets" href="https://twitter.com/muuankarski">
+                    <i class="icon-twitter"></i></a></li>
+                <li><a title="email" href="mailto:markuskainu@gmail.com">
+                    <i class="icon-envelope"></i></a></li>
+            </ul>
+		</div>
+
+		<h3><a href="/">Markus Kainu</a></h3>	
+		
+	</header>
+	
+	<!-- If you want to use an element as a wrapper, i.e. for styling only, then <div> is still the element to use -->
+	<div class="wrap content shadow">
+	
+        <h1 class="pull-right"><small>Thursday - Aug 08, 2013</small></h1>
+
+<h1 class="post-title">rustfare-package and using Rosstat regional statistics</h1>
+
+<p>I have been working on Russian statistical data a lot during this year. However, accessing many open data sources has proven to be cumbersome. One example is mighty <a href="http://www.gks.ru/wps/wcm/connect/rosstat_main/rosstat/ru/statistics/publications/catalog/doc_1138623506156">regional data resource by Rosstat</a>. To facilitate access to this and other data sources I begun to write package for R-language called <a href="http://markuskainu.fi/rustfare">rustfare</a>. Below you find some key characteristics of the rustfare at this point in time. It will be improved and extended constantly so make sure you have the latest version installed and that you follow the up-to-date instructions. I will announce major updates through this blog and my twitter.</p>
+
+<h2>rustfare-package</h2>
+
+<ul>
+<li>The rustfare package pools together tools for searching, extracting, and formatting welfare data on Russian Federation from different data providers. </li>
+<li>The rustfare functions are named according to data provider or the data set. </li>
+<li>Currently there is data available from: 
+
+<ul>
+<li>Rosstat Regional Statistics, </li>
+<li>OECD, </li>
+<li>Quality of Governance -institute and</li>
+<li>GADM database of Global Administrative Areas. </li>
+<li>World Bank World Development Indicators on Russian Federation can be accessed using <a href="http://cran.r-project.org/web/packages/WDI/index.html">WDI-package</a> (for examples, see: <a href="http://markuskainu.fi/r-tutorial/wb/">markuskainu.fi/r-tutorial/wb/</a></li>
+</ul></li>
+<li>Currently I&#39;m working on incorporating also <a href="http://std.gmcrosstata.ru/webapi/opendatabase?id=vpn2002_pert">census data from 2002</a> and <a href="http://www.vybory.izbirkom.ru/region/region/izbirkom?action=show&amp;root=1&amp;tvd=100100028713304&amp;vrn=100100028713299&amp;region=0&amp;global=1&amp;sub_region=0&amp;prver=0&amp;pronetvd=null&amp;vibid=100100028713304&amp;type=233">election data from duma election 2011</a> with the package</li>
+</ul>
+
+<h2>Installation</h2>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>devtools<span class="p">)</span>
+install_github<span class="p">(</span>repo <span class="o">=</span> <span class="s">&quot;rustfare&quot;</span><span class="p">,</span> username <span class="o">=</span> <span class="s">&quot;muuankarski&quot;</span><span class="p">)</span>
+library<span class="p">(</span>rustfare<span class="p">)</span>
+</code></pre></div>
+
+<h2>Examples: Rosstat regional statistics</h2>
+
+<p><a href="http://www.gks.ru/wps/wcm/connect/rosstat_main/rosstat/ru/statistics/publications/catalog/doc_1138623506156">Rosstat regional statistic</a> includes values of the indicators on three levels:</p>
+
+<ol>
+<li>federal level</li>
+<li>federal district level</li>
+<li>regional level</li>
+</ol>
+
+<p>To dowload the data you may use <code>GetRosstat()</code>-function that requires two arguments, </p>
+
+<ol>
+<li><code>indicator</code> (from the listing above), </li>
+<li><code>level</code> (federal/federal_district/region)</li>
+</ol>
+
+<p>The code below returns a dataset at <strong>federal district level</strong> on <strong>infant mortality</strong> and plots a line graph over time.</p>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>  <span class="c1"># load rustfare for obtaining the data</span>
+library<span class="p">(</span>ggplot2<span class="p">)</span>  <span class="c1"># load ggplot2 for plotting</span>
+dat <span class="o">&lt;-</span> GetRosstat<span class="p">(</span><span class="s">&quot;infant_mortality_rate&quot;</span><span class="p">,</span> <span class="s">&quot;federal_district&quot;</span><span class="p">)</span>
+head<span class="p">(</span>dat<span class="p">,</span> <span class="m">3</span><span class="p">)</span>  <span class="c1"># print the first 6 rows of data.frame</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">##        id_name                               region year value
+## 1 дальневокруг Дальневосточный\r\nфедеральный округ 1995  20.5
+## 2 дальневокруг Дальневосточный\r\nфедеральный округ 2001  18.1
+## 3 дальневокруг Дальневосточный\r\nфедеральный округ 2000  18.6
+##                           region_ru                    region_en
+## 1 Дальневосточный федеральный округ Far Eastern Federal District
+## 2 Дальневосточный федеральный округ Far Eastern Federal District
+## 3 Дальневосточный федеральный округ Far Eastern Federal District
+##              level id_shape             indicator
+## 1 federal_district        4 infant_mortality_rate
+## 2 federal_district        4 infant_mortality_rate
+## 3 federal_district        4 infant_mortality_rate
+</code></pre></div>
+
+<div class="highlight"><pre><code class="r">ggplot<span class="p">(</span>dat<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> year<span class="p">,</span> y <span class="o">=</span> value<span class="p">,</span> color <span class="o">=</span> region_en<span class="p">))</span> <span class="o">+</span> geom_point<span class="p">()</span> <span class="o">+</span> geom_line<span class="p">()</span> <span class="o">+</span> 
+    geom_text<span class="p">(</span>data <span class="o">=</span> subset<span class="p">(</span>dat<span class="p">,</span> year <span class="o">==</span> <span class="m">2010</span><span class="p">),</span> aes<span class="p">(</span>x <span class="o">=</span> year<span class="p">,</span> y <span class="o">=</span> value<span class="p">,</span> color <span class="o">=</span> region_en<span class="p">,</span> 
+        label <span class="o">=</span> region_en<span class="p">),</span> size <span class="o">=</span> <span class="m">3</span><span class="p">,</span> hjust <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span> theme<span class="p">(</span>legend.position <span class="o">=</span> <span class="s">&quot;none&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-08-rustfare-rosstat-regional/rosstat.png" alt="Infant mortality rates at federal district level"> </p>
+
+<p>Next chunk of code extracts the same indicators but at the regional level</p>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>  <span class="c1"># load rustfare for obtaining the data</span>
+library<span class="p">(</span>ggplot2<span class="p">)</span>  <span class="c1"># load ggplot2 for plotting</span>
+dat <span class="o">&lt;-</span> GetRosstat<span class="p">(</span><span class="s">&quot;infant_mortality_rate&quot;</span><span class="p">,</span> <span class="s">&quot;region&quot;</span><span class="p">)</span>
+head<span class="p">(</span>dat<span class="p">,</span> <span class="m">3</span><span class="p">)</span>  <span class="c1"># print the first 6 rows of data.frame</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">##           region       region_en year value  level id_shape
+## 1 Алтайский край Altai Territory 2005  11.5 region     2513
+## 2 Алтайский край Altai Territory 1995  20.8 region     2513
+## 3 Алтайский край Altai Territory 2008   9.1 region     2513
+##               indicator
+## 1 infant_mortality_rate
+## 2 infant_mortality_rate
+## 3 infant_mortality_rate
+</code></pre></div>
+
+<div class="highlight"><pre><code class="r">ggplot<span class="p">(</span>dat<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> year<span class="p">,</span> y <span class="o">=</span> value<span class="p">,</span> color <span class="o">=</span> region_en<span class="p">))</span> <span class="o">+</span> geom_point<span class="p">()</span> <span class="o">+</span> geom_line<span class="p">()</span> <span class="o">+</span> 
+    geom_text<span class="p">(</span>data <span class="o">=</span> subset<span class="p">(</span>dat<span class="p">,</span> year <span class="o">==</span> <span class="m">2010</span><span class="p">),</span> aes<span class="p">(</span>x <span class="o">=</span> year<span class="p">,</span> y <span class="o">=</span> value<span class="p">,</span> color <span class="o">=</span> region_en<span class="p">,</span> 
+        label <span class="o">=</span> region_en<span class="p">),</span> size <span class="o">=</span> <span class="m">3</span><span class="p">,</span> hjust <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span> theme<span class="p">(</span>legend.position <span class="o">=</span> <span class="s">&quot;none&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-08-rustfare-rosstat-regional/rosstat2.png" alt="Infant mortality rates at regional level"> </p>
+
+
+<!--
+<small class="well" style="padding: 6px;">
+
+    Follow me on <a href="http://twitter.com/muuankarski">Twitter</a>.
+
+</small>
+-->
+
+<div style="margin: 15px 0; padding-top: 5px; border-top: 1px solid lightgray;">
+
+<small class="pull-right">
+    <a href="/blog/r-project/2013/08/12/rustfare-spatial-visualization-gadm.html"
+    
+    >rustfare-package: Spatial visualization using Global Administrative Areas -data &rarr;</a>
+</small>
+
+
+
+<small>
+    <a href="/blog/r-project/2013/08/07/eurostat-spatial-visualisation.html" title="">&larr; Spatial visualisation of Eurostat regional data</a>
+</small>
+
+
+</div>
+
+<!--
+<div style="font-size: 85%;">
+Related Posts:
+<ul>
+
+    <li><a href="/blog/r-project/2013/11/14/world-values-survey-on-map.html" title="">Visualising World Values Survey on a Map in R</a></li>
+
+    <li><a href="/blog/tools/2013/10/15/markdown-pandoc-tieteellinen-teksti.html" title="">Markdown ja pandoc - tekstipohjaisen tieteellisen kirjoittamisen työvirta</a></li>
+
+    <li><a href="/blog/r-project/2013/09/17/economic-history-dataset-in-r.html" title="">Maddison Project database in R</a></li>
+
+</ul>
+</div>
+-->
+
+<!--
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'joshbranchaud'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+-->
+
+
+ <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'markuskainuresearchblog'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+
+
+		
+	</div>
+
+
+	
+	<!-- The main page footer can contain items such as copyright and contact information. It can also contain a duplicated navigation of your site which is not usually contained within a <nav> -->
+	<!-- ARIA: the landmark role "contentinfo" is added here as it contains metadata that applies to the parent document -->
+	<footer role="contentinfo" style="margin: 10px 5px;">
+
+        <small class="pull-right">With a little help from <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small>
+
+		<!-- Copyright information can be contained within the <small> element. The <time> element is used here to indicate that the '2012' is a date -->
+		<small>Copyright &copy; <a href="http://markuskainu.fi">Markus Kainu</a> <time datetime="2013">2013</time></small>
+		
+	</footer>
+
+    </div>
+	
+	
+</body>
+</html>
+

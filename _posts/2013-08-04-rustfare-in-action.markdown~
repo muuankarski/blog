@@ -1,0 +1,60 @@
+---
+layout: post
+title:  "rustfare in action!"
+date:   2013-08-04 23:53:45
+categories: R-project
+---
+
+# Title
+
+
+{% highlight r %}
+summary(cars)
+{% endhighlight %}
+
+
+
+{% highlight text %}
+##      speed           dist    
+##  Min.   : 4.0   Min.   :  2  
+##  1st Qu.:12.0   1st Qu.: 26  
+##  Median :15.0   Median : 36  
+##  Mean   :15.4   Mean   : 43  
+##  3rd Qu.:19.0   3rd Qu.: 56  
+##  Max.   :25.0   Max.   :120
+{% endhighlight %}
+
+
+You can also embed plots, for example:
+
+
+{% highlight r %}
+library(rustfare)
+library(ggplot2)
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## Loading required package: methods
+{% endhighlight %}
+
+
+
+{% highlight r %}
+
+dat <- GetRosstat("infant_mortality_rate", "federal_district")
+
+ggplot(dat, aes(x = year, y = value, color = region_en)) + geom_point() + geom_line() + 
+    geom_text(data = subset(dat, year == 2010), aes(x = year, y = value, color = region_en, 
+        label = region_en), size = 3, hjust = 1) + theme(legend.position = "none")
+{% endhighlight %}
+
+![center](/figs/2013-08-04-rustfare-in-action/rossplot.png) 
+
+
+
+
+
+[jekyll-gh]: https://github.com/mojombo/jekyll
+[jekyll]:    http://jekyllrb.com

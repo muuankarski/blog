@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Set this to the main language of your site -->
+<head>
+	<!-- Define the page charset to be utf-8 -->
+	<meta charset="utf-8" />
+	
+    <title>Markdown ja pandoc - tekstipohjaisen tieteellisen kirjoittamisen työvirta Markus Kainu</title>
+	
+	<!-- Enter a brief description of your page -->
+	<meta name="description" content="">
+	
+	<!-- Define a viewport to mobile devices to use - telling the browser to assume that the page is as wide as the device (width=device-width) and setting the initial page zoom level to be 1 (initial-scale=1.0) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Atom Feed -->
+    <link href="/blog/feed.xml" rel="alternate" title="Markus Kainu's Blog Post Feed" type="application/atom+xml">
+	
+	<!-- Add normalize.css which enables browsers to render all elements more consistently and in line with modern standards as it only targets particular styles that need normalizing -->
+	<link href="/css/normalize.css" rel="stylesheet" media="all" />
+
+    <!-- Add bootstrap which makes everything better -->
+    <link href="/css/readable-bootstrap.min.css" rel="stylesheet" media="all" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <!-- Stylesheet for Pygments highlighting -->
+    <link href="/css/pygments.css" rel="stylesheet" media="all" />
+
+    <!-- Include the site stylesheet -->
+	<link href="/css/styles.css" rel="stylesheet" media="all" />
+	
+	<!-- Include the HTML5 shiv and shiv print polyfills for Internet Explorer browsers 8 and below -->
+	<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js" media="all"></script>
+		<script src="/js/html5shiv-printshiv.js" media="print"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+    <div class="container">
+
+	<!-- The page header typically contains items such as your site heading, logo and possibly the main site navigation -->
+	<!-- ARIA: the landmark role "banner" is set as it is the prime heading or internal title of the page --> 
+	<header role="banner" class="subhead">
+	
+		<!-- ARIA: the landmark role "navigation" is added here as the element contains site navigation -->
+		<div class="subnav">
+			<!-- This can contain your site navigation either in an unordered list or even a paragraph that contains links that allow users to navigate your site -->
+            <ul class="nav nav-pills pull-right">
+                <li><a href="/blog/">blog</a></li>
+                <li><a href="/about.html">about</a></li>
+                <li><a href="/resources.html">resources</a></li>
+                <li><a title="code" href="http://github.com/muuankarski">
+                    <i class="icon-github"></i></a></li>
+                <li><a title="tweets" href="https://twitter.com/muuankarski">
+                    <i class="icon-twitter"></i></a></li>
+                <li><a title="email" href="mailto:markuskainu@gmail.com">
+                    <i class="icon-envelope"></i></a></li>
+            </ul>
+		</div>
+
+		<h3><a href="/">Markus Kainu</a></h3>	
+		
+	</header>
+	
+	<!-- If you want to use an element as a wrapper, i.e. for styling only, then <div> is still the element to use -->
+	<div class="wrap content shadow">
+	
+        <h1 class="pull-right"><small>Tuesday - Oct 15, 2013</small></h1>
+
+<h1 class="post-title">Markdown ja pandoc - tekstipohjaisen tieteellisen kirjoittamisen työvirta</h1>
+
+<p>Tässä kirjoituksessa esitellään tekstipohjainen työvirta digitaalisten tekstien kirjoittajalle, joka haluaa tehdä yksinkertaiset asiat yksinkertaisesti ja keskittyä monimutkaisten asioiden monimutkaisuuteen.</p>
+
+<h2>Digitaalisuus ja MS Wordin kuolema</h2>
+
+<p>Skottilaisen scifi-kirjailijan Charles Strossin lauantaina julkaisema blogiposti <em><a href="http://www.antipope.org/charlie/blog-static/2013/10/why-microsoft-word-must-die.html">Why Microsoft Word must Die</a></em> on herättänyt vilkasta keskustelua blogin kommenttiosiossa, ja tekstiä on jaettu ahkerasti sosiaalisessa mediassa viime päivinä. Stross on läpensä kyllästynyt Microsoftin tekstinkäsittelyohjelman yleiseen epätarkoituksenmukaisuuteen, tekniseen takapajuisuuteen sekä ansaitsemattomaan valta-asemaan ja haluaa sen kuolevan.</p>
+
+<blockquote>
+<p>Microsoft Word is a tyrant of the imagination, a petty, unimaginative, inconsistent dictator that is ill-suited to any creative writer&#39;s use. Worse: it is a near-monopolist, dominating the word processing field. Its pervasive near-monopoly status has brainwashed software developers to such an extent that few can imagine a word processing tool that exists as anything other than as a shallow imitation of the Redmond Behemoth. But what exactly is wrong with it?</p>
+</blockquote>
+
+<p>Stross kirjoittaa ansiokkaasti siitä, mikä kaikki ohjelmassa on vialla kirjoja kirjoittavan ammattilaisen näkökulmasta. Tieteellisen kirjoittamisen näkökulmasta MS Wordissä on vialla huomattavasti useampi seikka kuin mihin Stross puuttuu, mutta silti sillä on yhä vankka asema myös tieteellisen kirjoittamisessa.</p>
+
+<p>Wordin suosion ja kelvottomuuden ydin on sen <strong>WYSIWYG</strong>, eli <em>What You See Is What You Get</em> (mitä näet, sitä saat) -tyyppinen käyttöliittymä. Useat ihmiset haluavat edelleen hahmottaa tekstinsä vasten valkoista A4-koodin paperia, vaikka yhä useampi teksti julkaistaan vain digitaalisessa muodossa (blogi,e-kirja,www-sivu, tms.) tai se tullaan taittamaan uudelleen ennen paperille tulostamista. Tämä on tietysti seurausta laajemmasta tiedonvälityksen digitalisoitumisesta, jota ei ole tarpeen tässä laajemmin käsitella kuin vain todeta että <strong>MS Wordin <em>What You See Is What You Get</em> -lupaus pitää paikkansa koko ajan yhä harvemmin</strong>. Kirjoittajat tuottavat tekstejä yhä laajemmalle kirjolle julkaisualustoja, mikä tarkoittanee MS Wordille nopeaa kuolemaa ja siihen luottaville kirjoittajille lisääntyviä ongelmia. </p>
+
+<h2>Lähdekoodiajattelu tieteellisessä kirjoittamisessa</h2>
+
+<p>Tämä blogipäivitys valmistaa lukijaansa Wordin kuolemaan esittelemällä nokkelan lähestymistavan digitaaliseen kirjoittamiseen. (mikäli kirjoitat käsin tai mekaanisella kirjoituskoneella et tule hyötymään tästä) Kutsun sitä <em>lähdekoodiajatteluksi kirjoittamisessa</em> ja ajattelun ydin on siinä, että <strong>kirjoittaja laatii tekstistä <em>tekstimuotoisen lähdekoodin</em>, joka käännetään kulloinkin tarvittavaan asiakirjaformaattiin</strong>. Tässä esimerkissä teksti kirjoitetaan <a href="http://daringfireball.net/projects/markdown/">markdown</a>-merkintäkielellä ja käännetään <a href="http://johnmacfarlane.net/pandoc/README.html">pandoc</a>-dokumentinkääntäjällä haluttuun julkaisuformaattiin, joka voi olla esim: </p>
+
+<ul>
+<li>HTML formaatit: XHTML, HTML5, ja HTML esitysgrafiikka käyttäen
+<a href="http://www.w3.org/Talks/Tools/Slidy">Slidy</a>,
+<a href="http://lab.hakim.se/reveal-js/">reveal.js</a>,
+<a href="http://goessner.net/articles/slideous/">Slideous</a>,
+<a href="http://meyerweb.com/eric/tools/s5/">S5</a>, tai
+<a href="http://paulrouget.com/dzslides/">DZSlides</a>.</li>
+<li>Tekstinkäsittelyohjelmien formaatit: Microsoft Word
+<a href="http://www.microsoft.com/interop/openup/openxml/default.aspx">docx</a>,
+OpenOffice/LibreOffice
+<a href="http://en.wikipedia.org/wiki/OpenDocument">ODT</a>, <a href="http://opendocument.xml.org/">OpenDocument
+XML</a></li>
+<li>E-kirjat: <a href="http://en.wikipedia.org/wiki/EPUB">EPUB</a> version 2 or 3,
+<a href="http://www.fictionbook.org/index.php/Eng:XML_Schema_Fictionbook_2.1">FictionBook2</a></li>
+<li> Dokumentaatio-formaatit: <a href="http://www.docbook.org/">DocBook</a>, <a href="http://www.gnu.org/software/texinfo/">GNU
+TexInfo</a>, <a href="http://www.gnu.org/software/groff/groff.html">Groff
+man</a> pages, <a href="http://www.haskell.org/haddock/doc/html/ch03s08.html">Haddock
+markup</a></li>
+<li>Outline-formaatit: <a href="http://dev.opml.org/spec2.html">OPML</a></li>
+<li>TeX-formaatit: <a href="http://www.latex-project.org/">LaTeX</a>,
+<a href="http://www.pragma-ade.nl/">ConTeXt</a>, LaTeX Beamer esitysgrafiikka</li>
+<li><a href="http://en.wikipedia.org/wiki/Portable_Document_Format">PDF</a> via
+LaTeX</li>
+<li>Kevyet merkintäkielet:
+<a href="http://daringfireball.net/projects/markdown/">Markdown</a>,
+<a href="http://docutils.sourceforge.net/docs/ref/rst/introduction.html">reStructuredText</a>,
+<a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a>, <a href="http://www.mediawiki.org/wiki/Help:Formatting">MediaWiki
+markup</a>, Emacs
+<a href="http://orgmode.org">Org-Mode</a>,
+<a href="http://redcloth.org/textile">Textile</a></li>
+<li>Kustomoidut formaatit: <a href="http://www.lua.org">lua</a>.</li>
+</ul>
+
+<p>Kun tekstistä on olemassa <em>tekstimuotoinen lähdekoodi</em> täytyy kirjoittajan ylläpitää vain tätä yhtä tekstiä ja kaikki muut formaatit on käännettävissä tästä lähteestä tarpeen mukaan. Tekstimuotoinen lähdekoodi luo puitteet myös kunnollisen versionhallinnan, kuten <a href="http://linux.fi/wiki/Git">git</a>:in käytölle. Sillä on myös monia muita etuja, joista kenties myöhemmissä kirjoituksissa lisää.</p>
+
+<h2>Tekstipohjaisen kirjoittamisen ohjelmistoympäristö</h2>
+
+<p>Tekstin kirjoittamiseen tietokoneella vaaditaan vain <a href="http://fi.wikipedia.org/wiki/Tekstieditori">tekstieditori</a>, joista <em>muistio/notepad</em> lienee Windows-käyttäjille tutuin. <a href="http://en.wikipedia.org/wiki/List_of_text_editors">Wikipediassa</a> on kattava lista editoreista, mutta hyvään alkuun pääsee Windowsissa <a href="http://notepad-plus-plus.org/">notepad++</a>:lla ja OS X:ssä esim. <a href="http://aquamacs.org/">Aquamacs</a>-emacs-pohjaisella editorilla. Linux-jakeluiden oletuseditorit ovat aivan kelpoja.</p>
+
+<p>Markdown on tekstipohjainen merkintäkieli, joten sen kirjoittaminen ei vaadi kuin tekstieditorin. Markdown-muotoisen lähdekoodin kääntämiseen haluttuun formaattiin tarvitaan jo aiemmin mainittu pandoc, jota kehittää aktiivisesti Berkeleyn yliopiston filosofian professorin <a href="http://johnmacfarlane.net/">John MacFarlane</a>. Mikäli haluat kääntää tekstin tieteellisissä julkaisuissa suosittuun <a href="http://fi.wikipedia.org/wiki/Latex">LaTeX</a>-formaattiin, niin sinun tulee asentaa koneellesi myös LaTeX. Alla on ohjeet sekä pandocin että latexin asentamiseen:</p>
+
+<ul>
+<li><a href="http://johnmacfarlane.net/pandoc/installing.html">Pandoc:in asentaminen linuxiin, Mac OS X:ään ja Windowsiin</a>  - latauksen ja asennuksen kesto n. 30s.</li>
+<li><a href="http://www.latex-project.org/ftp.html">Latex:in asentaminen linuxiin, Mac OS X:ään ja Windowsiin</a> - latauksen ja asennuksen kesto n. 60 min.</li>
+</ul>
+
+<p>Seuraava esimerkki perustuu uusimpaan pandocin versioon <a href="http://johnmacfarlane.net/pandoc/releases.html#pandoc-1.12.0.2-2013-09-20">pandoc 1.12.0.2 (2013-09-20)</a>.</p>
+
+<h2>Esimerkki tieteellisen tekstin lähdekoodista</h2>
+
+<p>Seuraavassa esiteltävä minimaalinen esimerkki sisältää: </p>
+
+<ol>
+<li>julkaisun tekstin markdown-muodossa sekä</li>
+<li>viitattujen julkaisujen bibliografiset tiedot <a href="http://en.wikipedia.org/wiki/BibTeX">BibTeX</a>-muodossa.</li>
+</ol>
+
+<h3>1. teksti markdown-muodossa</h3>
+
+<p>Tekstin alussa on <a href="http://en.wikipedia.org/wiki/YAML">YAML</a>-muotoinen metadata-osio, johon tulee dokumentin metatiedot. Muilta osin teksti noudattelee markup-syntaxia lisättynä kahdella matemaattisella kaavalla sekä erityyppisillä lähdeviittauksilla kahteen artikkeliin. Merkintäkieli on helppolukuista myös <em>lähdekoodi</em>-muodossaan. Tässä demossa lähdeviitetiedoston nimi on <em>teksti.md</em>.</p>
+<div class="highlight"><pre><code class="r language-r" data-lang="r"><span class="o">---</span>
+title<span class="o">:</span>  <span class="s">&#39;Esimerkkiteksti kirjoitettuna markdown-merkintäkielellä&#39;</span>
+author<span class="o">:</span> Markus Kainu
+affiliation<span class="o">:</span> Turun yliopisto
+date<span class="o">:</span> Lokakuu <span class="m">2013</span>
+bibliography<span class="o">:</span> bibtex.bib
+lang<span class="o">:</span> finnish
+tags<span class="o">:</span> <span class="p">[</span>markdown<span class="p">,</span> pandoc<span class="p">]</span>
+<span class="kc">...</span>
+
+<span class="c1"># Suhteellisuusteoriasta ja Higgsin bosonista</span>
+
+<span class="c1">## Suhteellisuusteoriasta</span>
+
+Lorem ipsum<span class="p">[</span><span class="o">^</span><span class="m">1</span><span class="p">]</span> <span class="o">@</span>einstein1935can dolor sit amet<span class="p">,</span> consectetur adipiscing elit. Etiam at augue et quam placerat tristique <span class="p">[</span>s. <span class="m">12-15</span><span class="p">,</span> <span class="o">@</span>einstein1935can<span class="p">]</span>. 
+
+<span class="o">$</span>e <span class="o">=</span> mc<span class="o">^</span><span class="m">2</span><span class="o">$</span>
+
+Vestibulum ante ipsum <span class="p">[</span><span class="o">-@</span>einstein1935can<span class="p">]</span> primis <span class="kr">in</span> faucibus orci luctus et ultrices posuere cubilia Curae<span class="p">;</span> Mauris imperdiet sem odio<span class="p">,</span> at pharetra mauris congue dignissim.
+
+<span class="o">!</span><span class="p">[</span>Massa aiheuttaa poikkeaman avaruuden geometriassa<span class="p">](</span>http<span class="o">://</span>upload.wikimedia.org<span class="o">/</span>wikipedia<span class="o">/</span>commons<span class="o">/</span><span class="m">2</span><span class="o">/</span><span class="m">22</span><span class="o">/</span>Spacetime_curvature.png<span class="p">)</span>
+
+<span class="p">[</span><span class="o">^</span><span class="m">1</span><span class="p">]</span><span class="o">:</span> Alaviitteen teksti on tässä.
+
+<span class="c1">## Higgsin bosonista</span>
+
+Donec tortor justo<span class="p">,</span> venenatis sodales fermentum ut<span class="p">,</span> eleifend sit amet lorem. Curabitur rutrum faucibus leo<span class="p">,</span> nec porttitor est consequat sit amet. <span class="p">[</span><span class="o">@</span>lee1977weak<span class="p">]</span>
+
+<span class="o">!</span><span class="p">[</span>Tiettyjen partikkeleiden välisten suhteiden standardi<span class="o">-</span>mallin mukainen tiivistelmä<span class="p">](</span>kuvat<span class="o">/</span>higgs.png<span class="p">)</span>
+
+Lorem ipsum dolor <span class="o">@</span>lee1977weak <span class="p">[</span>s. <span class="m">35</span><span class="p">]</span> sit amet<span class="p">,</span> consectetur adipiscing elit. Etiam at augue et quam placerat tristique. 
+
+<span class="o">$</span>M_Z<span class="o">=</span>\frac<span class="p">{</span>v\sqrt<span class="p">{</span>g<span class="o">^</span><span class="m">2</span><span class="o">+</span><span class="p">{</span>g<span class="s">&#39;</span><span class="err">}^2}}2$</span>
+
+Vestibulum ante ipsum primis <span class="kr">in</span> faucibus orci luctus et ultrices posuere cubilia Curae<span class="p">;</span> Mauris imperdiet sem odio<span class="p">,</span> at pharetra mauris congue dignissim. Donec tortor justo<span class="p">,</span> venenatis sodales fermentum ut<span class="p">,</span> eleifend sit amet lorem. Curabitur rutrum faucibus leo<span class="p">,</span> nec porttitor est consequat sit amet.
+
+<span class="c1"># Taulukot</span>
+
+Table<span class="o">:</span> Einsteinin lapset
+
+Syntymäaika Etunimet        Sukunimi    Sukupuoli
+<span class="o">---------</span>   <span class="o">--------</span>        <span class="o">--------</span>    <span class="o">----------</span>
+<span class="m">14.05.1904</span>  Hans<span class="p">,</span> Albert    Einstein    mies
+<span class="m">28.06.1910</span>  Eduard          Einstein    mies
+
+<span class="o">*</span>Lähde<span class="o">:</span> <span class="p">[</span>wikipedia<span class="p">](</span>http<span class="o">://</span>fi.wikipedia.org<span class="o">/</span>wiki<span class="o">/</span>Albert_Einstein<span class="c1">#Einsteinin_avioliitot)*</span>
+
+
+<span class="c1"># Lähdeviitteet</span>
+</code></pre></div>
+<h3>2. lähdeviitteet BiBTeX-muodossa</h3>
+
+<p>Kenties yksinkertaisin tapa käyttää lähdeviitteitä on LaTeX-ladontajärjestelmästä tuttu <a href="http://en.wikipedia.org/wiki/BibTeX">BibTeX</a>-muoto. Viitteet on mahdollista viedä kaikista viitteidenhallintaohjelmista ko. muotoiseen tekstitiedostoon. Google Scholar -palvelun hakutuloksissa on mm. <a href="http://www.youtube.com/watch?v=SsJSR2b4_qc">suora linkki osuman bibliografisten tietojen lataamiseen BibTeX-muodossa</a>. Tässä demossa lähdeviitetiedoston nimi on <em>bibtex.bib</em> ja se näyttää seuraavalta:</p>
+<div class="highlight"><pre><code class="r language-r" data-lang="r"><span class="o">@</span>article<span class="p">{</span>einstein1935can<span class="p">,</span>
+  title<span class="o">=</span><span class="p">{</span>Can quantum<span class="o">-</span>mechanical description of physical reality be considered complete<span class="o">?</span><span class="p">},</span>
+  author<span class="o">=</span><span class="p">{</span>Einstein<span class="p">,</span> Albert and Podolsky<span class="p">,</span> Boris and Rosen<span class="p">,</span> Nathan<span class="p">},</span>
+  journal<span class="o">=</span><span class="p">{</span>Physical review<span class="p">},</span>
+  volume<span class="o">=</span><span class="p">{</span><span class="m">47</span><span class="p">},</span>
+  number<span class="o">=</span><span class="p">{</span><span class="m">10</span><span class="p">},</span>
+  pages<span class="o">=</span><span class="p">{</span><span class="m">777</span><span class="p">},</span>
+  year<span class="o">=</span><span class="p">{</span><span class="m">1935</span><span class="p">},</span>
+  publisher<span class="o">=</span><span class="p">{</span>APS<span class="p">}</span>
+<span class="p">},</span>
+
+<span class="o">@</span>article<span class="p">{</span>lee1977weak<span class="p">,</span>
+  title<span class="o">=</span><span class="p">{</span>Weak interactions at very high energies<span class="o">:</span> The role of the Higgs<span class="o">-</span>boson mass<span class="p">},</span>
+  author<span class="o">=</span><span class="p">{</span>Lee<span class="p">,</span> Benjamin W and Quigg<span class="p">,</span> Chris and Thacker<span class="p">,</span> Harry B<span class="p">},</span>
+  journal<span class="o">=</span><span class="p">{</span>Physical Review D<span class="p">},</span>
+  volume<span class="o">=</span><span class="p">{</span><span class="m">16</span><span class="p">},</span>
+  number<span class="o">=</span><span class="p">{</span><span class="m">5</span><span class="p">},</span>
+  pages<span class="o">=</span><span class="p">{</span><span class="m">1519</span><span class="p">},</span>
+  year<span class="o">=</span><span class="p">{</span><span class="m">1977</span><span class="p">},</span>
+  publisher<span class="o">=</span><span class="p">{</span>APS<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>Dokumentin kääntäminen pandoc-ohjelmalla</h2>
+
+<p>Pandoc-ohjelmaan ei ole olemassa graafista käyttöliittymää, vaan komennot tulee ajaa ns. <em>komentorivissä</em>. Windowsissa komentorivi voi olla hankalasti löydettävissä, mutta oheinen Jyväskylän yliopiston ohje auttaa asiassa: <a href="http://users.jyu.fi/%7Enieminen/ohj1/materiaalia/tyokaluohjeet/komentorivi_selviytyminen.html#komentorivit-windowsissa-command-prompt">Komentorivit Windowsissa: Command Prompt</a>. OS X:ssä komentorivin saa auki klikkailemalla: <code>Applications&gt;Utilities&gt;Terminal</code>. Linuxissa pikanäppäin <code>Ctrl + Alt + t</code>avaa päätteen.</p>
+
+<p>Kun olet avannut komentorivin, sinun tulee vaihtaa hakemistoksi se hakemistoksi, jossa lähdekoodisi sijaitsee. Mikäli se on kansio <code>essee</code> työpöydällä, niin oikea komento voisi olla <code>cd desktop/essee</code>. Komentorivin komennot eroavat eri käyttöjärjestelmissä hieman, joten katso apua täältä: <a href="http://users.jyu.fi/%7Enieminen/ohj1/materiaalia/tyokaluohjeet/komentorivi_selviytyminen.html">Selviytymisopas: Komentorivin käyttö</a> tai käytä googlea.</p>
+
+<p>Kun olet saanut navigoitua itsesi oikeaan hakemistoon komentorivillä tulee sinun enää syöttää komento, joka kääntää lähdekoodin haluamaasi formaattiin. Erityisen yksinkertaisissa käännöksissä riittää yleensä <code>pandoc lahdekoodi.md -o haluttu_formaatti.xxx</code>. <a href="http://johnmacfarlane.net/pandoc/README.html">Pandocin ohjeista</a> löytyy miltei rajaton määrä ohjeita kääntämisen hienosäätämiseen. Alla on komennot yleisimpiin käännöksiin siten, että myös matemaattiset kaavat sekä lähdeviitteet generoituvat käännettäessä.</p>
+<div class="highlight"><pre><code class="r language-r" data-lang="r"><span class="c1"># latex-pdf -muotoon</span>
+pandoc teksti.md <span class="o">-</span>o teksti.pdf <span class="o">--</span>toc <span class="o">--</span>number<span class="o">-</span>section <span class="o">--</span>latexmathml <span class="o">--</span>filter pandoc<span class="o">-</span>citeproc
+<span class="c1"># .html-muotoon</span>
+pandoc <span class="o">-</span>s teksti.md <span class="o">-</span>o teksti.html <span class="o">--</span>toc <span class="o">--</span>number<span class="o">-</span>section <span class="o">--</span>latexmathml <span class="o">--</span>filter pandoc<span class="o">-</span>citeproc
+<span class="c1"># .odt-muotoon</span>
+pandoc teksti.md <span class="o">-</span>o teksti.odt <span class="o">--</span>toc <span class="o">--</span>number<span class="o">-</span>section <span class="o">--</span>latexmathml <span class="o">--</span>filter pandoc<span class="o">-</span>citeproc
+<span class="c1"># .docx-muotoon</span>
+pandoc teksti.md <span class="o">-</span>o teksti.docx <span class="o">--</span>toc <span class="o">--</span>number<span class="o">-</span>section <span class="o">--</span>latexmathml <span class="o">--</span>filter pandoc<span class="o">-</span>citeproc
+<span class="c1"># .epub-muotoon</span>
+pandoc teksti.md <span class="o">-</span>o teksti.epub <span class="o">--</span>toc <span class="o">--</span>number<span class="o">-</span>section <span class="o">--</span>latexmathml <span class="o">--</span>filter pandoc<span class="o">-</span>citeproc
+</code></pre></div>
+<h2>Lataukset</h2>
+
+<h3>Lähdekoodi, viitetiedot, kuvat ja komennot zipattuna</h3>
+
+<p>Zipatussa paketissa on lähdeteksti (teksti.md), viitteet (bibtex.bib), pandoc-komennot (komennot.md) sekä kansio <code>kuvat</code>, jossa kuva higgs.png. Toinen kuva tulee suoraan wikipediasta.</p>
+
+<ul>
+<li><a href="http://markuskainu.fi/material/blog/pandocmarkdown2013/demo.zip">demo.zip</a></li>
+</ul>
+
+<h3>Esimerkkiteksti eri formaateissa</h3>
+
+<ul>
+<li><a href="http://markuskainu.fi/material/blog/pandocmarkdown2013/teksti.pdf">teksti.pdf</a></li>
+<li><a href="http://markuskainu.fi/material/blog/pandocmarkdown2013/teksti.html">teksti.html</a></li>
+<li><a href="http://markuskainu.fi/material/blog/pandocmarkdown2013/teksti.odt">teksti.odt</a></li>
+<li><a href="http://markuskainu.fi/material/blog/pandocmarkdown2013/teksti.docx">teksti.docx</a></li>
+<li><a href="http://markuskainu.fi/material/blog/pandocmarkdown2013/teksti.epub">teksti.epub</a></li>
+</ul>
+
+<p>html-käännös ilman tyylitiedostoa näyttää nykypäivän silmään luotaantyöntävältä ja sitä voi ehostaa esim. tämän css-tiedoston avulla: <a href="http://markuskainu.fi/material/css/article.css">markuskainu.fi/material/css/article.css</a>. Voit lisätä sen lähdekoodiin vaikkapa metatietojen alle oheisella koodilla</p>
+
+<p><code>&lt;link href=&quot;http://markuskainu.fi/material/css/article.css&quot;</code>
+<code>rel=&quot;stylesheet&quot; type=&quot;text/css&quot; title=&quot;compact&quot;&gt;&lt;/link&gt;</code></p>
+
+<p>Muotoiltu html-muotoinen teksti näyttäisi sitten tältä: <a href="http://markuskainu.fi/material/blog/pandocmarkdown2013/teksti_css.html">teksti_css.html</a></p>
+
+<h2>Lopuksi</h2>
+
+<p>Kirjoituksessa kuvattu työvirta ei tietenkään ole virheetön saati ns. <em>valmis</em>, mutta toimii hyvin jo tällaisenaan. Aivan erityisen hyödylliseksi kuvatun kaltainen työvirta tulee, mikäli tieteellinen tutkimus sisältää laskennallista analyysiä, jonka tuloksia (taulukoita, kuvioita) tekstissä esitellään. Mm. R-kielessä on olemassa erinomainen ekosysteemi laskennallisen analyysin ja sitä kuvaavan tekstin kirjoittamiseen rinnakkain yhteen tekstiin. Tähän ns. <em>toistettavan analyysin</em> lähdetymistapaan voi tutustua englanniksi juuri julkaistussa kirjassa <a href="http://www.crcpress.com/product/isbn/9781482203530">Xie, Yihui. 2014. Dynamic Documents with R and Knitr</a> (<a href="https://github.com/yihui/knitr-book">kirjan lähde githubissa</a>) tai suomeksi vaikka osoitteessa: <a href="http://markuskainu.fi/workshop/toistettava/">markuskainu.fi/workshop/toistettava/</a>. Asiaa käsiteltäneen myös tässä blogissa syksyn aikana. </p>
+
+<p><strong>Kysymyksiä ja kommentteja rohkeasti tuohon alapuolelle!</strong></p>
+
+
+<!--
+<small class="well" style="padding: 6px;">
+
+    Follow me on <a href="http://twitter.com/muuankarski">Twitter</a>.
+
+</small>
+-->
+
+<div style="margin: 15px 0; padding-top: 5px; border-top: 1px solid lightgray;">
+
+<small class="pull-right">
+    <a href="/blog/r-project/2013/11/14/world-values-survey-on-map.html"
+    
+    >Visualising World Values Survey on a Map in R &rarr;</a>
+</small>
+
+
+
+<small>
+    <a href="/blog/r-project/2013/09/17/economic-history-dataset-in-r.html" title="">&larr; Maddison Project database in R</a>
+</small>
+
+
+</div>
+
+<!--
+<div style="font-size: 85%;">
+Related Posts:
+<ul>
+
+    <li><a href="/blog/r-project/2013/11/14/world-values-survey-on-map.html" title="">Visualising World Values Survey on a Map in R</a></li>
+
+    <li><a href="/blog/r-project/2013/09/17/economic-history-dataset-in-r.html" title="">Maddison Project database in R</a></li>
+
+    <li><a href="/blog/r-project/2013/09/03/esa2013-participants.html" title="">ESA2013-conference - Where did the scholars come from?</a></li>
+
+</ul>
+</div>
+-->
+
+<!--
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'joshbranchaud'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+-->
+
+
+ <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'markuskainuresearchblog'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+
+
+		
+	</div>
+
+
+	
+	<!-- The main page footer can contain items such as copyright and contact information. It can also contain a duplicated navigation of your site which is not usually contained within a <nav> -->
+	<!-- ARIA: the landmark role "contentinfo" is added here as it contains metadata that applies to the parent document -->
+	<footer role="contentinfo" style="margin: 10px 5px;">
+
+        <small class="pull-right">With a little help from <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small>
+
+		<!-- Copyright information can be contained within the <small> element. The <time> element is used here to indicate that the '2012' is a date -->
+		<small>Copyright &copy; <a href="http://markuskainu.fi">Markus Kainu</a> <time datetime="2013">2013</time></small>
+		
+	</footer>
+
+    </div>
+	
+	
+</body>
+</html>
+

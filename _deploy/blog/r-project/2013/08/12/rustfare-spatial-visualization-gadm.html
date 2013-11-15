@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Set this to the main language of your site -->
+<head>
+	<!-- Define the page charset to be utf-8 -->
+	<meta charset="utf-8" />
+	
+    <title>rustfare-package: Spatial visualization using Global Administrative Areas -data Markus Kainu</title>
+	
+	<!-- Enter a brief description of your page -->
+	<meta name="description" content="">
+	
+	<!-- Define a viewport to mobile devices to use - telling the browser to assume that the page is as wide as the device (width=device-width) and setting the initial page zoom level to be 1 (initial-scale=1.0) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Atom Feed -->
+    <link href="/blog/feed.xml" rel="alternate" title="Markus Kainu's Blog Post Feed" type="application/atom+xml">
+	
+	<!-- Add normalize.css which enables browsers to render all elements more consistently and in line with modern standards as it only targets particular styles that need normalizing -->
+	<link href="/css/normalize.css" rel="stylesheet" media="all" />
+
+    <!-- Add bootstrap which makes everything better -->
+    <link href="/css/readable-bootstrap.min.css" rel="stylesheet" media="all" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <!-- Stylesheet for Pygments highlighting -->
+    <link href="/css/pygments.css" rel="stylesheet" media="all" />
+
+    <!-- Include the site stylesheet -->
+	<link href="/css/styles.css" rel="stylesheet" media="all" />
+	
+	<!-- Include the HTML5 shiv and shiv print polyfills for Internet Explorer browsers 8 and below -->
+	<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js" media="all"></script>
+		<script src="/js/html5shiv-printshiv.js" media="print"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+    <div class="container">
+
+	<!-- The page header typically contains items such as your site heading, logo and possibly the main site navigation -->
+	<!-- ARIA: the landmark role "banner" is set as it is the prime heading or internal title of the page --> 
+	<header role="banner" class="subhead">
+	
+		<!-- ARIA: the landmark role "navigation" is added here as the element contains site navigation -->
+		<div class="subnav">
+			<!-- This can contain your site navigation either in an unordered list or even a paragraph that contains links that allow users to navigate your site -->
+            <ul class="nav nav-pills pull-right">
+                <li><a href="/blog/">blog</a></li>
+                <li><a href="/about.html">about</a></li>
+                <li><a href="/resources.html">resources</a></li>
+                <li><a title="code" href="http://github.com/muuankarski">
+                    <i class="icon-github"></i></a></li>
+                <li><a title="tweets" href="https://twitter.com/muuankarski">
+                    <i class="icon-twitter"></i></a></li>
+                <li><a title="email" href="mailto:markuskainu@gmail.com">
+                    <i class="icon-envelope"></i></a></li>
+            </ul>
+		</div>
+
+		<h3><a href="/">Markus Kainu</a></h3>	
+		
+	</header>
+	
+	<!-- If you want to use an element as a wrapper, i.e. for styling only, then <div> is still the element to use -->
+	<div class="wrap content shadow">
+	
+        <h1 class="pull-right"><small>Monday - Aug 12, 2013</small></h1>
+
+<h1 class="post-title">rustfare-package: Spatial visualization using Global Administrative Areas -data</h1>
+
+<p>rustfare has functions for downloading a spatial shapefile from <a href="http://www.gadm.org/">Global Administrative Areas (GADM)</a> database that can be further used to for example plot the data from Rosstat regional data.</p>
+
+<p>In this post I will demonstrate how to access GADM geographical data and how to combine data from Rosstat Regional Statistics with GADM to visualize the data.</p>
+
+<h2>Accessing the GADM data using rustfare-package</h2>
+
+<p>Function <code>GetRusGADM()</code> downloads the shapefile at desired level and returns a <code>SpatialPolygonDataFrame</code>. <code>Level</code> argument accepts four values:</p>
+
+<ul>
+<li><code>federal</code>: whole country</li>
+<li><code>federal_districts</code>: Federal districts (8)</li>
+<li><code>region</code>: administrative boundaries at the level of federal regions/oblasts (82)</li>
+<li><code>rayon</code>: administrative boundaries at the level of rayons/krais</li>
+</ul>
+
+<div class="highlight"><pre><code class="r">shapefile <span class="o">&lt;-</span> GetRusGADM<span class="p">(</span>level<span class="p">)</span>
+</code></pre></div>
+
+<h2>Plotting shapefiles</h2>
+
+<p>Once you have downloaded the <code>SpatialPolygonDataFrame</code> you can plot the  the boundaries at different level with following code chunks.</p>
+
+<h3>At federal level</h3>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>
+shapefile <span class="o">&lt;-</span> GetRusGADM<span class="p">(</span><span class="s">&quot;federal&quot;</span><span class="p">)</span>
+plot<span class="p">(</span>shapefile<span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-12-rustfare-spatial-visualization-gadm/map1.png" alt="center"> </p>
+
+<h3>At federal district level</h3>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>
+shapefile <span class="o">&lt;-</span> GetRusGADM<span class="p">(</span><span class="s">&quot;federal_district&quot;</span><span class="p">)</span>
+plot<span class="p">(</span>shapefile<span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-12-rustfare-spatial-visualization-gadm/map2.png" alt="center"> </p>
+
+<h3>At regional level</h3>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>
+shapefile <span class="o">&lt;-</span> GetRusGADM<span class="p">(</span><span class="s">&quot;region&quot;</span><span class="p">)</span>
+plot<span class="p">(</span>shapefile<span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-12-rustfare-spatial-visualization-gadm/map3.png" alt="center"> </p>
+
+<h3>At rayon level</h3>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>
+shapefile <span class="o">&lt;-</span> GetRusGADM<span class="p">(</span><span class="s">&quot;rayon&quot;</span><span class="p">)</span>
+plot<span class="p">(</span>shapefile<span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-12-rustfare-spatial-visualization-gadm/map4.png" alt="center"> </p>
+
+<h2>Merging Rosstat Regional data and visualising it</h2>
+
+<p>In the below I will show two ways to visualise the data. I&#39;m more familiar with <strong>ggplot2</strong>-graphics, and here I&#39;m also taking it a bit further than using <code>spplot</code>-function from <strong>sp</strong>-package.</p>
+
+<h3>Using maptools and sp</h3>
+
+<p>I&#39;m downloading data on life expectancy of men at regional level from Rosstat.</p>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>
+dat <span class="o">&lt;-</span> GetRosstat<span class="p">(</span><span class="s">&quot;life_expectancy_men&quot;</span><span class="p">,</span> <span class="s">&quot;region&quot;</span><span class="p">)</span>
+dat09 <span class="o">&lt;-</span> subset<span class="p">(</span>dat<span class="p">,</span> year <span class="o">==</span> <span class="m">2009</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Then I&#39;m downloading the shapefile at federal districh level, naming the rows as required for <code>spCbind</code>-function, ordering the datas and then combining them</p>
+
+<p>To be able to join the data they both must have a) equal number of rows and b) the rownames must match. Lets first give both data rownames that can be used in combining the data. Then let&#39;s order the both datas according to rownames. At last, lets see if there are same number of rows in both datas.</p>
+
+<div class="highlight"><pre><code class="r">shape <span class="o">&lt;-</span> GetRusGADM<span class="p">(</span><span class="s">&quot;region&quot;</span><span class="p">)</span>
+library<span class="p">(</span>maptools<span class="p">)</span>
+<span class="c1"># Remove case with NA id_shape (moscow)</span>
+dat09 <span class="o">&lt;-</span> dat09<span class="p">[</span><span class="o">!</span>is.na<span class="p">(</span>dat09<span class="o">$</span>id_shape<span class="p">),</span> <span class="p">]</span>
+row.names<span class="p">(</span>dat09<span class="p">)</span> <span class="o">&lt;-</span> dat09<span class="o">$</span>id_shape
+row.names<span class="p">(</span>shape<span class="p">)</span> <span class="o">&lt;-</span> as.character<span class="p">(</span>shape<span class="o">$</span>ID_1<span class="p">)</span>
+dat09 <span class="o">&lt;-</span> dat09<span class="p">[</span>order<span class="p">(</span>row.names<span class="p">(</span>dat09<span class="p">)),</span> <span class="p">]</span>
+shape <span class="o">&lt;-</span> shape<span class="p">[</span>order<span class="p">(</span>row.names<span class="p">(</span>shape<span class="p">)),</span> <span class="p">]</span>
+dim<span class="p">(</span>dat09<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">## [1] 80  7
+</code></pre></div>
+
+<div class="highlight"><pre><code class="r">dim<span class="p">(</span>shape<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">## [1] 82 16
+</code></pre></div>
+
+<p>As we deleted some cases from Rosstat data it now has two cases less than <code>SpatialPolygonDataFrame</code> before, we have to remove those rows from <code>SpatialPolygonDataFrame</code>. To find out what they are we use `setdiff()-function and we can see they are 2521 and 2530. We remove them and combine the datas.</p>
+
+<div class="highlight"><pre><code class="r">setdiff<span class="p">(</span>row.names<span class="p">(</span>shape<span class="p">),</span> row.names<span class="p">(</span>dat09<span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">## [1] &quot;2521&quot; &quot;2530&quot;
+</code></pre></div>
+
+<div class="highlight"><pre><code class="r">shape <span class="o">&lt;-</span> shape<span class="p">[</span><span class="o">!</span>row.names<span class="p">(</span>shape<span class="p">)</span> <span class="o">%in%</span> c<span class="p">(</span><span class="s">&quot;2521&quot;</span><span class="p">,</span> <span class="s">&quot;2530&quot;</span><span class="p">),</span> <span class="p">]</span>
+df <span class="o">&lt;-</span> spCbind<span class="p">(</span>shape<span class="p">,</span> dat09<span class="p">)</span>
+</code></pre></div>
+
+<p>Simple grey scale plot can be done as follow</p>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>sp<span class="p">)</span>
+spplot<span class="p">(</span>df<span class="p">,</span> <span class="s">&quot;value&quot;</span><span class="p">,</span> col.regions <span class="o">=</span> grey.colors<span class="p">(</span><span class="m">20</span><span class="p">,</span> <span class="m">0.9</span><span class="p">,</span> <span class="m">0.3</span><span class="p">))</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-12-rustfare-spatial-visualization-gadm/mapcombine3.png" alt="center"> </p>
+
+<h2>Using ggplot2</h2>
+
+<p><strong>ggplot2</strong> is not perhaps the ideal choice for plotting spatial data as <code>SpatialPolygonDataFrame</code> has to be converted into regular data.frame using <code>fortify</code> and this procedure cannot be reversed very easy. However, once you have fortified the data you can take advantage of all the neat functionalities of ggplot2-package.</p>
+
+<p>We will use the code above for the great part. As we want to plot all the years available as facets of the same plot we have to alter the code in two ways. First, not to subset the data and, second, to convert it into <strong>wide</strong> format from the default <strong>long</strong> format that <strong>rustfare</strong> provides you with. Data will be <strong>casted</strong> into wide format using <code>dcast</code>-function in <strong>reshape2</strong>-package.</p>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>
+dat <span class="o">&lt;-</span> GetRosstat<span class="p">(</span><span class="s">&quot;life_expectancy_men&quot;</span><span class="p">,</span> <span class="s">&quot;region&quot;</span><span class="p">)</span>
+<span class="c1"># cast the data into wide format</span>
+library<span class="p">(</span>reshape2<span class="p">)</span>
+dat.w <span class="o">&lt;-</span> dcast<span class="p">(</span>dat<span class="p">,</span> region_en <span class="o">+</span> id_shape <span class="o">~</span> year<span class="p">,</span> value.var <span class="o">=</span> <span class="s">&quot;value&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Then the data in wide format will be joined with shapefile from GADM.</p>
+
+<div class="highlight"><pre><code class="r">shape <span class="o">&lt;-</span> GetRusGADM<span class="p">(</span><span class="s">&quot;region&quot;</span><span class="p">)</span>
+library<span class="p">(</span>maptools<span class="p">)</span>
+dat.w <span class="o">&lt;-</span> dat.w<span class="p">[</span><span class="o">!</span>is.na<span class="p">(</span>dat.w<span class="o">$</span>id_shape<span class="p">),</span> <span class="p">]</span>
+row.names<span class="p">(</span>dat.w<span class="p">)</span> <span class="o">&lt;-</span> dat.w<span class="o">$</span>id_shape
+row.names<span class="p">(</span>shape<span class="p">)</span> <span class="o">&lt;-</span> as.character<span class="p">(</span>shape<span class="o">$</span>ID_1<span class="p">)</span>
+dat.w <span class="o">&lt;-</span> dat.w<span class="p">[</span>order<span class="p">(</span>row.names<span class="p">(</span>dat.w<span class="p">)),</span> <span class="p">]</span>
+shape <span class="o">&lt;-</span> shape<span class="p">[</span>order<span class="p">(</span>row.names<span class="p">(</span>shape<span class="p">)),</span> <span class="p">]</span>
+<span class="c1"># from above</span>
+difference <span class="o">&lt;-</span> setdiff<span class="p">(</span>row.names<span class="p">(</span>shape<span class="p">),</span> row.names<span class="p">(</span>dat.w<span class="p">))</span>
+shape <span class="o">&lt;-</span> shape<span class="p">[</span><span class="o">!</span>row.names<span class="p">(</span>shape<span class="p">)</span> <span class="o">%in%</span> difference<span class="p">,</span> <span class="p">]</span>
+<span class="c1">#</span>
+df <span class="o">&lt;-</span> spCbind<span class="p">(</span>shape<span class="p">,</span> dat.w<span class="p">)</span>
+</code></pre></div>
+
+<p>Then the <code>SpatialPolygonDataFrame</code> must be converted into regular <code>data.frame</code>, and I&#39;m using the <code>fortify</code>-function from <strong>ggplot2</strong>-package for it. We also need *<em>rgeos</em>-package for this conversion.</p>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>ggplot2<span class="p">)</span>
+library<span class="p">(</span>rgeos<span class="p">)</span>
+df<span class="o">$</span>id <span class="o">&lt;-</span> rownames<span class="p">(</span>df<span class="o">@</span>data<span class="p">)</span>
+map.points <span class="o">&lt;-</span> fortify<span class="p">(</span>df<span class="p">,</span> region <span class="o">=</span> <span class="s">&quot;id&quot;</span><span class="p">)</span>
+map.df <span class="o">&lt;-</span> merge<span class="p">(</span>map.points<span class="p">,</span> df<span class="p">,</span> by <span class="o">=</span> <span class="s">&quot;id&quot;</span><span class="p">)</span>
+dim<span class="p">(</span>map.df<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">## [1] 541696     28
+</code></pre></div>
+
+<div class="highlight"><pre><code class="r">head<span class="p">(</span>map.df<span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">##     id  long   lat order  hole piece  group ID_0 ISO NAME_0 ID_1 NAME_1
+## 1 2511 39.65 45.16     1 FALSE     1 2511.1  190 RUS Russia 2511 Adygey
+## 2 2511 39.68 45.16     2 FALSE     1 2511.1  190 RUS Russia 2511 Adygey
+##                                                                           VARNAME_1
+## 1 Adygea|Adygeya|Adygheya|Republic of Adygeya|Adygeyskaya A.Obl.|Respublika Adygeya
+## 2 Adygea|Adygeya|Adygheya|Republic of Adygeya|Adygeyskaya A.Obl.|Respublika Adygeya
+##           NL_NAME_1 HASC_1 CC_1     TYPE_1 ENGTYPE_1 VALIDFR_1 VALIDTO_1
+## 1 ?????????? ??????  RU.AD 4301 Respublika  Republic   Unknown   Present
+## 2 ?????????? ??????  RU.AD 4301 Respublika  Republic   Unknown   Present
+##   REMARKS_1 Shape_Leng Shape_Area region_en id_shape X2000 X2005 X2009
+## 1      &lt;NA&gt;      9.508     0.9129    Adygea     2511 62.07 61.91 64.38
+## 2      &lt;NA&gt;      9.508     0.9129    Adygea     2511 62.07 61.91 64.38
+</code></pre></div>
+
+<p>Now data we want to visualize is as a regular <code>data.frame</code> and ready for plotting. But one more thing is need: <strong>ggplot2</strong> eats data in long format, so we have to melt the data into long format using <code>melt</code>-function from <strong>reshape2</strong>-package.</p>
+
+<div class="highlight"><pre><code class="r"><span class="c1"># As we want to plot map faceted by years 2000, 2005 and 2009 we have to</span>
+<span class="c1"># melt it into long format</span>
+library<span class="p">(</span>reshape2<span class="p">)</span>
+map.df.l <span class="o">&lt;-</span> melt<span class="p">(</span>data <span class="o">=</span> map.df<span class="p">,</span> id.vars <span class="o">=</span> c<span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">,</span> <span class="s">&quot;long&quot;</span><span class="p">,</span> <span class="s">&quot;lat&quot;</span><span class="p">,</span> <span class="s">&quot;group&quot;</span><span class="p">),</span> measure.vars <span class="o">=</span> c<span class="p">(</span><span class="s">&quot;X2000&quot;</span><span class="p">,</span> 
+    <span class="s">&quot;X2005&quot;</span><span class="p">,</span> <span class="s">&quot;X2009&quot;</span><span class="p">))</span>
+<span class="c1"># lets tweak a bit and remove X&#39;s from year values and make it into</span>
+<span class="c1"># numerical</span>
+map.df.l<span class="o">$</span>variable <span class="o">&lt;-</span> str_replace_all<span class="p">(</span>map.df.l<span class="o">$</span>variable<span class="p">,</span> <span class="s">&quot;X&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+map.df.l<span class="o">$</span>variable <span class="o">&lt;-</span> factor<span class="p">(</span>map.df.l<span class="o">$</span>variable<span class="p">)</span>
+map.df.l<span class="o">$</span>variable <span class="o">&lt;-</span> as.numeric<span class="p">(</span>levels<span class="p">(</span>map.df.l<span class="o">$</span>variable<span class="p">))[</span>map.df.l<span class="o">$</span>variable<span class="p">]</span>
+dim<span class="p">(</span>map.df.l<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">## [1] 1625088       6
+</code></pre></div>
+
+<p>As a result we get rather massive data with 1625088 rows and 6 columns. We can then plot this using the following command.</p>
+
+<div class="highlight"><pre><code class="r"><span class="c1"># plot faceted by year</span>
+ggplot<span class="p">(</span>map.df.l<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span>group<span class="o">=</span>group<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>aes<span class="p">(</span>fill <span class="o">=</span> value<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>data <span class="o">=</span> map.df.l<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">),</span> 
+               fill<span class="o">=</span><span class="kc">NA</span><span class="p">,</span> 
+               color <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span>
+               size<span class="o">=</span><span class="m">0.1</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># white borders</span>
+  coord_map<span class="p">(</span>project<span class="o">=</span><span class="s">&quot;orthographic&quot;</span><span class="p">,</span>
+            xlim<span class="o">=</span>c<span class="p">(</span><span class="m">25</span><span class="p">,</span><span class="m">170</span><span class="p">),</span>
+              ylim<span class="o">=</span>c<span class="p">(</span><span class="m">45</span><span class="p">,</span><span class="m">70</span><span class="p">))</span> <span class="o">+</span>
+  facet_wrap<span class="p">(</span><span class="o">~</span>variable<span class="p">,</span> ncol<span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  theme_minimal<span class="p">()</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-12-rustfare-spatial-visualization-gadm/rmapcombineggplot5.png" alt="center"> </p>
+
+<h3>Plotting the changes from 2000 to 2009</h3>
+
+<p>Let&#39;s take advantage of data we got after we merged the Rosstat data into <code>SpatialPolygonDataFrame</code>, which is <code>df</code>. Let&#39;s calculate the change from 2000 to 2009 and fortify the data into data.frame. And then we point that <strong>ggplot2</strong> applies red colors for negative values (where life expectancy has worsened) and green color fot positive values (where life expectancy has improved).</p>
+
+<div class="highlight"><pre><code class="r">df<span class="o">$</span>change <span class="o">&lt;-</span> <span class="p">(</span>df<span class="o">$</span>X2009 <span class="o">-</span> df<span class="o">$</span>X2000<span class="p">)</span><span class="o">/</span>df<span class="o">$</span>X2000<span class="o">*</span><span class="m">100</span>
+df<span class="o">$</span>X2000 <span class="o">&lt;-</span> <span class="kc">NULL</span>
+df<span class="o">$</span>X2005 <span class="o">&lt;-</span> <span class="kc">NULL</span>
+df<span class="o">$</span>X2009 <span class="o">&lt;-</span> <span class="kc">NULL</span>
+<span class="c1">#</span>
+library<span class="p">(</span>ggplot2<span class="p">)</span>
+library<span class="p">(</span>rgeos<span class="p">)</span>
+df<span class="o">$</span>id <span class="o">&lt;-</span> rownames<span class="p">(</span>df<span class="o">@</span>data<span class="p">)</span>
+map.points <span class="o">&lt;-</span> fortify<span class="p">(</span>df<span class="p">,</span> region <span class="o">=</span> <span class="s">&quot;id&quot;</span><span class="p">)</span>
+map.df <span class="o">&lt;-</span> merge<span class="p">(</span>map.points<span class="p">,</span> df<span class="p">,</span> by <span class="o">=</span> <span class="s">&quot;id&quot;</span><span class="p">)</span>
+library<span class="p">(</span>reshape2<span class="p">)</span>
+map.df.l <span class="o">&lt;-</span> melt<span class="p">(</span>data <span class="o">=</span> map.df<span class="p">,</span> 
+                 id.vars <span class="o">=</span> c<span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">,</span> <span class="s">&quot;long&quot;</span><span class="p">,</span> 
+                             <span class="s">&quot;lat&quot;</span><span class="p">,</span> <span class="s">&quot;group&quot;</span><span class="p">),</span> 
+                 measure.vars <span class="o">=</span> <span class="s">&quot;change&quot;</span><span class="p">)</span>
+ggplot<span class="p">(</span>map.df.l<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span>group<span class="o">=</span>group<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>aes<span class="p">(</span>fill <span class="o">=</span> value<span class="p">))</span> <span class="o">+</span>
+  scale_fill_gradient2<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;green&quot;</span><span class="p">)</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>data <span class="o">=</span> map.df.l<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">),</span> 
+               fill<span class="o">=</span><span class="kc">NA</span><span class="p">,</span> 
+               color <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span>
+               size<span class="o">=</span><span class="m">0.1</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># white borders</span>
+  coord_map<span class="p">(</span>project<span class="o">=</span><span class="s">&quot;orthographic&quot;</span><span class="p">,</span>
+            xlim<span class="o">=</span>c<span class="p">(</span><span class="m">25</span><span class="p">,</span><span class="m">170</span><span class="p">),</span>
+              ylim<span class="o">=</span>c<span class="p">(</span><span class="m">45</span><span class="p">,</span><span class="m">70</span><span class="p">))</span> <span class="o">+</span>
+  theme_minimal<span class="p">()</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-12-rustfare-spatial-visualization-gadm/rmapcombineggplot6.png" alt="center"> </p>
+
+<h3>RosstatMapPlot()-function</h3>
+
+<p>There is a <code>RosstatMapPlot</code>-function in rustfare that takes <code>measure</code>, <code>year</code> and <code>level</code> as arguments and plots maps using the somewhat similar procedure as above. Have a look at examples below.</p>
+
+<h3>Infant mortality rate at regional level</h3>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>
+RosstatMapPlot<span class="p">(</span><span class="s">&quot;infant_mortality_rate&quot;</span><span class="p">,</span> <span class="m">2010</span><span class="p">,</span> <span class="s">&quot;region&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-12-rustfare-spatial-visualization-gadm/rosstatmap1.png" alt="center"> </p>
+
+<h3>Average pension size at federal district level</h3>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>rustfare<span class="p">)</span>
+RosstatMapPlot<span class="p">(</span><span class="s">&quot;average_size_of_pensions&quot;</span><span class="p">,</span> <span class="m">2010</span><span class="p">,</span> <span class="s">&quot;federal_district&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-08-12-rustfare-spatial-visualization-gadm/rosstatmap2.png" alt="center"> </p>
+
+
+<!--
+<small class="well" style="padding: 6px;">
+
+    Follow me on <a href="http://twitter.com/muuankarski">Twitter</a>.
+
+</small>
+-->
+
+<div style="margin: 15px 0; padding-top: 5px; border-top: 1px solid lightgray;">
+
+<small class="pull-right">
+    <a href="/blog/conference/2013/08/29/esa-conference-slides.html"
+    
+    >ESA 2013 conference presentation &rarr;</a>
+</small>
+
+
+
+<small>
+    <a href="/blog/r-project/2013/08/08/rustfare-rosstat-regional.html" title="">&larr; rustfare-package and using Rosstat regional statistics</a>
+</small>
+
+
+</div>
+
+<!--
+<div style="font-size: 85%;">
+Related Posts:
+<ul>
+
+    <li><a href="/blog/r-project/2013/11/14/world-values-survey-on-map.html" title="">Visualising World Values Survey on a Map in R</a></li>
+
+    <li><a href="/blog/tools/2013/10/15/markdown-pandoc-tieteellinen-teksti.html" title="">Markdown ja pandoc - tekstipohjaisen tieteellisen kirjoittamisen työvirta</a></li>
+
+    <li><a href="/blog/r-project/2013/09/17/economic-history-dataset-in-r.html" title="">Maddison Project database in R</a></li>
+
+</ul>
+</div>
+-->
+
+<!--
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'joshbranchaud'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+-->
+
+
+ <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'markuskainuresearchblog'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+
+
+		
+	</div>
+
+
+	
+	<!-- The main page footer can contain items such as copyright and contact information. It can also contain a duplicated navigation of your site which is not usually contained within a <nav> -->
+	<!-- ARIA: the landmark role "contentinfo" is added here as it contains metadata that applies to the parent document -->
+	<footer role="contentinfo" style="margin: 10px 5px;">
+
+        <small class="pull-right">With a little help from <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small>
+
+		<!-- Copyright information can be contained within the <small> element. The <time> element is used here to indicate that the '2012' is a date -->
+		<small>Copyright &copy; <a href="http://markuskainu.fi">Markus Kainu</a> <time datetime="2013">2013</time></small>
+		
+	</footer>
+
+    </div>
+	
+	
+</body>
+</html>
+

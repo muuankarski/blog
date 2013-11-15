@@ -1,0 +1,26 @@
+---
+layout: post
+title:  "Uusi blogi avattu!"
+date:   2013-08-05 10:00:45
+categories: R-project
+---
+
+# Uusi blogi avattu
+
+
+
+```{r}
+data(mtcars)
+```
+
+```{rautoplot}
+library(ggplot2)
+ggplot(mtcars, aes(x=cyl, y=gear)) + geom_point()
+
+```
+
+
+
+
+[jekyll-gh]: https://github.com/mojombo/jekyll
+[jekyll]:    http://jekyllrb.com

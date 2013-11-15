@@ -1,0 +1,35 @@
+cd ~/workspace/web/site_markuskainufi
+./knitpages.R
+
+###
+cd ~/workspace/web/site_markuskainufi/_html_static
+pandoc --section-divs -t html5 -s --template index.template -o ../index.html index.md
+pandoc --section-divs -t html5 -s --template about.template -o ../about.html about.md
+pandoc --section-divs -t html5 -s --template resources.template -o ../resources.html resources.md
+
+### karskitools
+cd cd ~/workspace/web/site_markuskainufi/karskitools
+pandoc --section-divs -t html5 -s --template index.template -o index.html index.md
+###rustfare
+cd ~/workspace/web/site_markuskainufi/rustfare
+./compile_rustfare.R
+#rm -r cache
+
+###
+cd ~/workspace/web/site_markuskainufi
+jekyll build
+
+###
+cd ~/workspace/web/site_markuskainufi
+jekyll serve
+###
+cd ~/workspace/web/site_markuskainufi/_deploy
+rm -r cache
+cd ~/workspace/web/site_markuskainufi/_deploy/rustfare
+rm -r cache
+cd ~/workspace/web/site_markuskainufi/_deploy/karskitools
+rm -r cache
+cd ~/workspace/web/site_markuskainufi/_deploy
+lftp -u np16003 -e "mirror -R;quit" ftp://np16003@www.muuankarski.org/domains/markuskainu.fi/public_html/
+
+

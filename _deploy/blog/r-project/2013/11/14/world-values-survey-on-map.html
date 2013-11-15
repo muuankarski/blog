@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Set this to the main language of your site -->
+<head>
+	<!-- Define the page charset to be utf-8 -->
+	<meta charset="utf-8" />
+	
+    <title>Visualising World Values Survey on a Map in R Markus Kainu</title>
+	
+	<!-- Enter a brief description of your page -->
+	<meta name="description" content="">
+	
+	<!-- Define a viewport to mobile devices to use - telling the browser to assume that the page is as wide as the device (width=device-width) and setting the initial page zoom level to be 1 (initial-scale=1.0) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Atom Feed -->
+    <link href="/blog/feed.xml" rel="alternate" title="Markus Kainu's Blog Post Feed" type="application/atom+xml">
+	
+	<!-- Add normalize.css which enables browsers to render all elements more consistently and in line with modern standards as it only targets particular styles that need normalizing -->
+	<link href="/css/normalize.css" rel="stylesheet" media="all" />
+
+    <!-- Add bootstrap which makes everything better -->
+    <link href="/css/readable-bootstrap.min.css" rel="stylesheet" media="all" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <!-- Stylesheet for Pygments highlighting -->
+    <link href="/css/pygments.css" rel="stylesheet" media="all" />
+
+    <!-- Include the site stylesheet -->
+	<link href="/css/styles.css" rel="stylesheet" media="all" />
+	
+	<!-- Include the HTML5 shiv and shiv print polyfills for Internet Explorer browsers 8 and below -->
+	<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js" media="all"></script>
+		<script src="/js/html5shiv-printshiv.js" media="print"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+    <div class="container">
+
+	<!-- The page header typically contains items such as your site heading, logo and possibly the main site navigation -->
+	<!-- ARIA: the landmark role "banner" is set as it is the prime heading or internal title of the page --> 
+	<header role="banner" class="subhead">
+	
+		<!-- ARIA: the landmark role "navigation" is added here as the element contains site navigation -->
+		<div class="subnav">
+			<!-- This can contain your site navigation either in an unordered list or even a paragraph that contains links that allow users to navigate your site -->
+            <ul class="nav nav-pills pull-right">
+                <li><a href="/blog/">blog</a></li>
+                <li><a href="/about.html">about</a></li>
+                <li><a href="/resources.html">resources</a></li>
+                <li><a title="code" href="http://github.com/muuankarski">
+                    <i class="icon-github"></i></a></li>
+                <li><a title="tweets" href="https://twitter.com/muuankarski">
+                    <i class="icon-twitter"></i></a></li>
+                <li><a title="email" href="mailto:markuskainu@gmail.com">
+                    <i class="icon-envelope"></i></a></li>
+            </ul>
+		</div>
+
+		<h3><a href="/">Markus Kainu</a></h3>	
+		
+	</header>
+	
+	<!-- If you want to use an element as a wrapper, i.e. for styling only, then <div> is still the element to use -->
+	<div class="wrap content shadow">
+	
+        <h1 class="pull-right"><small>Thursday - Nov 14, 2013</small></h1>
+
+<h1 class="post-title">Visualising World Values Survey on a Map in R</h1>
+
+<p>I&#39;m attending the <em>3rd international annual research conference: &quot;Cultural and Economic changes under cross-national perspective&quot;</em> at the <a href="http://lcsr.hse.ru/">Laboratory for Comparative Social Reseach at the Moscow Higher School of Economics</a> currently that gathers together scholars around the world interested in comparative social research. <a href="https://rawgithub.com/muuankarski/attributions/master/attrib_slides.html">in my presentation</a> I used some spatial visualizations and therefore I received several questions on how to implement such illustrations. In this brief demonstration I will show how to visualize country level data from <a href="http://www.worldvaluessurvey.org/">World Values Survey</a>(WVS) that is a widely used dataset in this context.</p>
+
+<p>I used the data for the first time yesterday when I downloaded the A &amp; B datasets from year 2005. As I&#39;m not familiar with dataset I won&#39;t go into details of if, but just bluntly implement a simple workflow for these spatial illustrations.</p>
+
+<h2>Loading the WVS and extracting the summary statistics</h2>
+
+<p>Again due to my incompetence in using the data I&#39;m not using any weights in deriving the summary statistics but just rely on the data as it is. If you want to improve this aspect you can consult for example <a href="http://markuskainu.fi/r-tutorial/survey/">my tutorial on using survey-package in R</a>.</p>
+
+<p>The variable of interest here is <code>V75: BE WILLING TO FIGHT IN WAR FOR YOUR COUNTRY</code> as it was discussed in the presentation by professor Ronald Inglehart. I found it interesting in his presentation that all the Scandinavian countries had a relatively high rates for this willingness, and I felt that there may a spatial story behind this, ie. approximity to Russian Federation.</p>
+
+<p>The question behind the key variable is formulated as:</p>
+
+<blockquote>
+<p>V75. Of course, we all hope that there will not be another war, but if it were to come to that, would you be
+willing to fight for your country? (Code one answer):</p>
+</blockquote>
+
+<p>And it has values and labels as:</p>
+
+<table>
+<tr>
+<th>Value</th><th>Label</th>
+<tr>
+<tr>
+<td>-5</td><td>Missing; Unknown</td>
+<tr>
+<tr>
+<td>-4</td><td>Not asked</td>
+<tr>
+<tr>
+<td>-3</td><td>Not applicable</td>
+<tr>
+<tr>
+<td>-2</td><td>No answer</td>
+<tr>
+<tr>
+<td>-1</td><td>Don't know'</td>
+<tr>
+<tr>
+<td>1</td><td>yes</td>
+<tr>
+<tr>
+<td>1</td><td>no</td>
+<tr>
+</table>
+
+<p></br></p>
+
+<p>I&#39;m focusing only in the <code>yes</code> or <code>no</code> values, or in <code>yes</code> in particular.</p>
+
+<p>The data is not provided in any generic for but only in proprietary SAS/SPSS/Stata format, but using <strong>foreign</strong>-package it is doable. (a .csv or .Rdata would perhaps be a good idea in these days!)</p>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>foreign<span class="p">)</span>
+<span class="c1"># Load the oridinal dataset into R</span>
+datB <span class="o">&lt;-</span> read.dta<span class="p">(</span><span class="s">&quot;~/workspace/data/wvs/wvs2005_v20090901b.dta&quot;</span><span class="p">)</span>
+datA <span class="o">&lt;-</span> read.dta<span class="p">(</span><span class="s">&quot;~/workspace/data/wvs/wvs2005_v20090901a.dta&quot;</span><span class="p">)</span>
+<span class="c1"># Create proportional tables from both data by country there are some issues</span>
+<span class="c1"># with country labels so I convert the variable into a string</span>
+datA<span class="o">$</span>v2 <span class="o">&lt;-</span> as.character<span class="p">(</span>datA<span class="o">$</span>v2<span class="p">)</span>
+datB<span class="o">$</span>v2 <span class="o">&lt;-</span> as.character<span class="p">(</span>datB<span class="o">$</span>v2<span class="p">)</span>
+<span class="c1"># Create unweighted proportional tables from both datas</span>
+tblA <span class="o">&lt;-</span> as.data.frame<span class="p">(</span>prop.table<span class="p">(</span>table<span class="p">(</span>datA<span class="o">$</span>v2<span class="p">,</span> datA<span class="o">$</span>v75<span class="p">),</span> <span class="m">1</span><span class="p">)</span> <span class="o">*</span> <span class="m">100</span><span class="p">)</span>
+tblB <span class="o">&lt;-</span> as.data.frame<span class="p">(</span>prop.table<span class="p">(</span>table<span class="p">(</span>datB<span class="o">$</span>v2<span class="p">,</span> datB<span class="o">$</span>v75<span class="p">),</span> <span class="m">1</span><span class="p">)</span> <span class="o">*</span> <span class="m">100</span><span class="p">)</span>
+<span class="c1"># Combine the tables</span>
+tbl <span class="o">&lt;-</span> rbind<span class="p">(</span>tblA<span class="p">,</span> tblB<span class="p">)</span>
+<span class="c1"># subset the tables to include only ues or no options</span>
+tbl2 <span class="o">&lt;-</span> tbl<span class="p">[</span>tbl<span class="o">$</span>Var2 <span class="o">%in%</span> c<span class="p">(</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="s">&quot;no&quot;</span><span class="p">),</span> <span class="p">]</span>
+tbl2<span class="o">$</span>Var2 <span class="o">&lt;-</span> factor<span class="p">(</span>tbl2<span class="o">$</span>Var2<span class="p">,</span> levels <span class="o">=</span> c<span class="p">(</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="s">&quot;no&quot;</span><span class="p">))</span>
+</code></pre></div>
+
+<h2>Distribution of answers by country as histogram</h2>
+
+<div class="highlight"><pre><code class="r"><span class="c1">## To nicely order the plot I will melt the data into wide format, reorder it</span>
+<span class="c1">## and convert it back to long format for plotting</span>
+library<span class="p">(</span>reshape2<span class="p">)</span>
+orderDat <span class="o">&lt;-</span> dcast<span class="p">(</span>tbl2<span class="p">,</span> Var1 <span class="o">~</span> Var2<span class="p">,</span> value.var <span class="o">=</span> <span class="s">&quot;Freq&quot;</span><span class="p">)</span>
+orderDat<span class="o">$</span>Var1 <span class="o">&lt;-</span> reorder<span class="p">(</span>orderDat<span class="o">$</span>Var1<span class="p">,</span> orderDat<span class="o">$</span>yes<span class="p">,</span> median<span class="p">)</span>
+tblPlot <span class="o">&lt;-</span> melt<span class="p">(</span>orderDat<span class="p">,</span> id.vars <span class="o">=</span> <span class="s">&quot;Var1&quot;</span><span class="p">,</span> measure.vars <span class="o">=</span> c<span class="p">(</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="s">&quot;no&quot;</span><span class="p">))</span>
+<span class="c1"># And then the plot relevelling the levels to match the daulft colors better</span>
+tblPlot<span class="o">$</span>variable <span class="o">&lt;-</span> factor<span class="p">(</span>tblPlot<span class="o">$</span>variable<span class="p">,</span> levels <span class="o">=</span> c<span class="p">(</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="s">&quot;yes&quot;</span><span class="p">))</span>
+library<span class="p">(</span>ggplot2<span class="p">)</span>
+ggplot<span class="p">(</span>tblPlot<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Var1<span class="p">,</span> y <span class="o">=</span> value<span class="p">,</span> fill <span class="o">=</span> variable<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat <span class="o">=</span> <span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> 
+    coord_flip<span class="p">()</span> <span class="o">+</span> theme<span class="p">(</span>legend.position <span class="o">=</span> <span class="s">&quot;top&quot;</span><span class="p">)</span> <span class="o">+</span> theme<span class="p">(</span>axis.text.x <span class="o">=</span> element_text<span class="p">(</span>size <span class="o">=</span> <span class="m">14</span><span class="p">),</span> 
+    axis.text.y <span class="o">=</span> element_text<span class="p">(</span>size <span class="o">=</span> <span class="m">14</span><span class="p">),</span> legend.text <span class="o">=</span> element_text<span class="p">(</span>size <span class="o">=</span> <span class="m">14</span><span class="p">))</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-11-14-world-values-survey-on-map/wvsBarplot.png" alt="center"> </p>
+
+<h2>Plotting the data on the map</h2>
+
+<h3>Downloading the geographical data</h3>
+
+<p>Here I&#39;m downloading the whole world shapefile from <a href="http://www-mappinghacks.com">www-mappinghacks.com</a>. Of course there are many more options if available, but I picked it as it small size file but it still has the details needed. (I&#39;m a novice in using world levels shapefiles fo please let me know of better resources).</p>
+
+<p>I greatly recommend you to familiarize yourself with theoretical literature of spatial reasoning in social sciences for example by reading <a href="http://books.google.ru/books/about/The_Sociology_of_Spatial_Inequality.html?id=67P6jXQ05LAC&amp;redir_esc=y"><em>Lobao, Linda M., Gregory Hooks, ja Ann R. Tickamyer. The Sociology of Spatial Inequality. State University of New York Press, 2007.</em></a> as well as with open source ecosystem for geographics information systems through <a href="http://www.asdar-book.org/">Bivand, Roger S., Edzer J. Pebesma, ja Virgilio Gómez-Rubio. Applied Spatial Data Analysis with R. 2. p. Springer, 2013.</a>. <a href="http://cran.r-project.org/web/views/Spatial.html">CRAN Task View: Analysis of Spatial Data</a> is a crucial resources if you want to push this approach further in your analysis. </p>
+
+<div class="highlight"><pre><code class="r">download.file<span class="p">(</span><span class="s">&quot;http://www.mappinghacks.com/data/TM_WORLD_BORDERS-0.2.zip&quot;</span><span class="p">,</span> destfile <span class="o">=</span> <span class="s">&quot;NUTS_2010_60M_SH.zip&quot;</span><span class="p">)</span>
+<span class="c1"># unzip to SpatialPolygonsDataFrame</span>
+unzip<span class="p">(</span><span class="s">&quot;NUTS_2010_60M_SH.zip&quot;</span><span class="p">)</span>
+library<span class="p">(</span>rgdal<span class="p">)</span>
+shape <span class="o">&lt;-</span> readOGR<span class="p">(</span>dsn <span class="o">=</span> <span class="s">&quot;./&quot;</span><span class="p">,</span> layer <span class="o">=</span> <span class="s">&quot;TM_WORLD_BORDERS-0.2&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="r"><span class="c1"># download.file(&#39;http://www.mappinghacks.com/data/TM_WORLD_BORDERS-0.2.zip&#39;,</span>
+<span class="c1"># destfile = &#39;NUTS_2010_60M_SH.zip&#39;) # unzip to SpatialPolygonsDataFrame</span>
+<span class="c1"># unzip(&#39;NUTS_2010_60M_SH.zip&#39;)</span>
+library<span class="p">(</span>rgdal<span class="p">)</span>
+<span class="c1"># shape &lt;- readOGR(dsn = &#39;./&#39;, layer = &#39;TM_WORLD_BORDERS-0.2&#39;)</span>
+shape <span class="o">&lt;-</span> readOGR<span class="p">(</span>dsn <span class="o">=</span> <span class="s">&quot;/home/aurelius/workspace/data/shapefiles/world/TM_WORLD_BORDERS_SIMPL-0.3/&quot;</span><span class="p">,</span> 
+    layer <span class="o">=</span> <span class="s">&quot;TM_WORLD_BORDERS_SIMPL-0.3&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><code class="text">## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;/home/aurelius/workspace/data/shapefiles/world/TM_WORLD_BORDERS_SIMPL-0.3/&quot;, layer: &quot;TM_WORLD_BORDERS_SIMPL-0.3&quot;
+## with 246 features and 11 fields
+## Feature type: wkbPolygon with 2 dimensions
+</code></pre></div>
+
+<h3>Converting the shape into data.frame and merging the attribute data with it</h3>
+
+<p>I&#39;m taking a bit of a shortcut here as I&#39;m converting the <code>SpatialPolygonDataFrame</code> right away into regular <code>data.frame</code> using <code>fortify</code>-function from <strong>ggplot2</strong>.</p>
+
+<p>Thereafter I will merge the <code>yes</code> values from the WVS data summary. This merging is often problematic due to mismatch in the country names in different datasets. In this example I&#39;m only changing the first letters of countrynames from WVS into uppercase and hope that match will happen. Most probably you would need to create a key table for perfect match.</p>
+
+<div class="highlight"><pre><code class="r"><span class="c1"># fortify the data</span>
+library<span class="p">(</span>ggplot2<span class="p">)</span>
+shape<span class="o">$</span>id <span class="o">&lt;-</span> rownames<span class="p">(</span>shape<span class="o">@</span>data<span class="p">)</span>
+map.points <span class="o">&lt;-</span> fortify<span class="p">(</span>shape<span class="p">,</span> region <span class="o">=</span> <span class="s">&quot;id&quot;</span><span class="p">)</span>
+map.df <span class="o">&lt;-</span> merge<span class="p">(</span>map.points<span class="p">,</span> shape<span class="p">,</span> by <span class="o">=</span> <span class="s">&quot;id&quot;</span><span class="p">)</span>
+<span class="c1"># subset only the yeas options</span>
+yesDat <span class="o">&lt;-</span> tblPlot<span class="p">[</span>tblPlot<span class="o">$</span>variable <span class="o">==</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="p">]</span>
+<span class="c1"># Function the uppercase the first characters</span>
+.simpleCap <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
+    s <span class="o">&lt;-</span> strsplit<span class="p">(</span>x<span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)[[</span><span class="m">1</span><span class="p">]]</span>
+    paste<span class="p">(</span>toupper<span class="p">(</span>substring<span class="p">(</span>s<span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">)),</span> substring<span class="p">(</span>s<span class="p">,</span> <span class="m">2</span><span class="p">),</span> sep <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> collapse <span class="o">=</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="p">}</span>
+yesDat<span class="o">$</span>Var1 <span class="o">&lt;-</span> as.character<span class="p">(</span>yesDat<span class="o">$</span>Var1<span class="p">)</span>
+yesDat<span class="o">$</span>Var1C <span class="o">&lt;-</span> sapply<span class="p">(</span>yesDat<span class="o">$</span>Var1<span class="p">,</span> .simpleCap<span class="p">)</span>
+<span class="c1"># merge the datas using country names</span>
+map.df <span class="o">&lt;-</span> merge<span class="p">(</span>map.df<span class="p">,</span> yesDat<span class="p">,</span> by.x <span class="o">=</span> <span class="s">&quot;NAME&quot;</span><span class="p">,</span> by.y <span class="o">=</span> <span class="s">&quot;Var1C&quot;</span><span class="p">,</span> all.x <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="c1"># order the data for smooth plotting</span>
+map.df <span class="o">&lt;-</span> map.df<span class="p">[</span>order<span class="p">(</span>map.df<span class="o">$</span>order<span class="p">),</span> <span class="p">]</span>
+</code></pre></div>
+
+<h3>A whole world using mercator projetion</h3>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>ggplot2<span class="p">)</span>
+ggplot<span class="p">(</span>map.df<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span>group<span class="o">=</span>group<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>aes<span class="p">(</span>fill<span class="o">=</span>value<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>data <span class="o">=</span> map.df<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">),</span> 
+               fill<span class="o">=</span><span class="kc">NA</span><span class="p">,</span> 
+               color <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span>
+               size<span class="o">=</span><span class="m">0.1</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># white borders</span>
+  scale_fill_gradient2<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span><span class="o">+</span>
+    theme<span class="p">(</span>legend.position<span class="o">=</span><span class="s">&quot;top&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-11-14-world-values-survey-on-map/wvsMercator.png" alt="center"> </p>
+
+<h3>Using Orthographic projection centered at Moscow</h3>
+
+<div class="highlight"><pre><code class="r">library<span class="p">(</span>ggplot2<span class="p">)</span>
+ggplot<span class="p">(</span>map.df<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">,</span>group<span class="o">=</span>group<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>aes<span class="p">(</span>fill<span class="o">=</span>value<span class="p">))</span> <span class="o">+</span>
+  geom_polygon<span class="p">(</span>data <span class="o">=</span> map.df<span class="p">,</span> aes<span class="p">(</span>long<span class="p">,</span>lat<span class="p">),</span> 
+               fill<span class="o">=</span><span class="kc">NA</span><span class="p">,</span> 
+               color <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span>
+               size<span class="o">=</span><span class="m">0.1</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># white borders</span>
+  scale_fill_gradient2<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span><span class="o">+</span>
+    theme<span class="p">(</span>legend.position<span class="o">=</span><span class="s">&quot;top&quot;</span><span class="p">)</span> <span class="o">+</span>
+    coord_map<span class="p">(</span><span class="s">&quot;ortho&quot;</span><span class="p">,</span> orientation<span class="o">=</span>c<span class="p">(</span><span class="m">55</span><span class="p">,</span> <span class="m">37</span><span class="p">,</span> <span class="m">0</span><span class="p">))</span>
+</code></pre></div>
+
+<p><img src="/figs/2013-11-14-world-values-survey-on-map/wvsOrtho.png" alt="center"> </p>
+
+<p>The grey stands for missing data that covers most of the countries. That is due to both missing data in VWS 2005 and errors in merging the attribute data with the shape. Also, the issue of spatial story behind the scandinavians willingness to fight wars did not become much clearer as a results of this one hour exercise.</p>
+
+
+<!--
+<small class="well" style="padding: 6px;">
+
+    Follow me on <a href="http://twitter.com/muuankarski">Twitter</a>.
+
+</small>
+-->
+
+<div style="margin: 15px 0; padding-top: 5px; border-top: 1px solid lightgray;">
+
+
+
+<small>
+    <a href="/blog/tools/2013/10/15/markdown-pandoc-tieteellinen-teksti.html" title="">&larr; Markdown ja pandoc - tekstipohjaisen tieteellisen kirjoittamisen työvirta</a>
+</small>
+
+
+</div>
+
+<!--
+<div style="font-size: 85%;">
+Related Posts:
+<ul>
+
+    <li><a href="/blog/tools/2013/10/15/markdown-pandoc-tieteellinen-teksti.html" title="">Markdown ja pandoc - tekstipohjaisen tieteellisen kirjoittamisen työvirta</a></li>
+
+    <li><a href="/blog/r-project/2013/09/17/economic-history-dataset-in-r.html" title="">Maddison Project database in R</a></li>
+
+    <li><a href="/blog/r-project/2013/09/03/esa2013-participants.html" title="">ESA2013-conference - Where did the scholars come from?</a></li>
+
+</ul>
+</div>
+-->
+
+<!--
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'joshbranchaud'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+-->
+
+
+ <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'markuskainuresearchblog'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+
+
+		
+	</div>
+
+
+	
+	<!-- The main page footer can contain items such as copyright and contact information. It can also contain a duplicated navigation of your site which is not usually contained within a <nav> -->
+	<!-- ARIA: the landmark role "contentinfo" is added here as it contains metadata that applies to the parent document -->
+	<footer role="contentinfo" style="margin: 10px 5px;">
+
+        <small class="pull-right">With a little help from <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small>
+
+		<!-- Copyright information can be contained within the <small> element. The <time> element is used here to indicate that the '2012' is a date -->
+		<small>Copyright &copy; <a href="http://markuskainu.fi">Markus Kainu</a> <time datetime="2013">2013</time></small>
+		
+	</footer>
+
+    </div>
+	
+	
+</body>
+</html>
+

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Set this to the main language of your site -->
+<head>
+	<!-- Define the page charset to be utf-8 -->
+	<meta charset="utf-8" />
+	
+    <title>Toistettava analyysi knitr:n ja pandoc:n avulla R:ssä Markus Kainu</title>
+	
+	<!-- Enter a brief description of your page -->
+	<meta name="description" content="">
+	
+	<!-- Define a viewport to mobile devices to use - telling the browser to assume that the page is as wide as the device (width=device-width) and setting the initial page zoom level to be 1 (initial-scale=1.0) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Atom Feed -->
+    <link href="/blog/feed.xml" rel="alternate" title="Markus Kainu's Blog Post Feed" type="application/atom+xml">
+	
+	<!-- Add normalize.css which enables browsers to render all elements more consistently and in line with modern standards as it only targets particular styles that need normalizing -->
+	<link href="/css/normalize.css" rel="stylesheet" media="all" />
+
+    <!-- Add bootstrap which makes everything better -->
+    <link href="/css/readable-bootstrap.min.css" rel="stylesheet" media="all" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <!-- Stylesheet for Pygments highlighting -->
+    <link href="/css/pygments.css" rel="stylesheet" media="all" />
+
+    <!-- Include the site stylesheet -->
+	<link href="/css/styles.css" rel="stylesheet" media="all" />
+	
+	<!-- Include the HTML5 shiv and shiv print polyfills for Internet Explorer browsers 8 and below -->
+	<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js" media="all"></script>
+		<script src="/js/html5shiv-printshiv.js" media="print"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+    <div class="container">
+
+	<!-- The page header typically contains items such as your site heading, logo and possibly the main site navigation -->
+	<!-- ARIA: the landmark role "banner" is set as it is the prime heading or internal title of the page --> 
+	<header role="banner" class="subhead">
+	
+		<!-- ARIA: the landmark role "navigation" is added here as the element contains site navigation -->
+		<div class="subnav">
+			<!-- This can contain your site navigation either in an unordered list or even a paragraph that contains links that allow users to navigate your site -->
+            <ul class="nav nav-pills pull-right">
+                <li><a href="/blog/">blog</a></li>
+                <li><a href="/about.html">about</a></li>
+                <li><a href="/resources.html">resources</a></li>
+                <li><a title="code" href="http://github.com/muuankarski">
+                    <i class="icon-github"></i></a></li>
+                <li><a title="tweets" href="https://twitter.com/muuankarski">
+                    <i class="icon-twitter"></i></a></li>
+                <li><a title="email" href="mailto:markuskainu@gmail.com">
+                    <i class="icon-envelope"></i></a></li>
+            </ul>
+		</div>
+
+		<h3><a href="/">Markus Kainu</a></h3>	
+		
+	</header>
+	
+	<!-- If you want to use an element as a wrapper, i.e. for styling only, then <div> is still the element to use -->
+	<div class="wrap content shadow">
+	
+        <h1 class="pull-right"><small>Saturday - Mar 02, 2013</small></h1>
+
+<h1 class="post-title">Toistettava analyysi knitr:n ja pandoc:n avulla R:ssä</h1>
+
+<h2>Taustaa</h2>
+
+<p>Pidin pari viikkoa sitten Turun yliopistolla työpajan otsakkeella <a href="http://markuskainu.fi/workshop/toistettava/">Oikopolkua datasta julkaisuun - Toistettava data-analyysiprosessi määrällisessä sosiaalitutkimuksessa R:n, Markdownin ja knitr:n avulla</a>. Työpajassa rakensimme toistettavan data-analyysiprosessin yhteiskuntatieteelliselle survey-tutkimukselle tyypilliseen asetelmaan. Survey-aineistona käytimme <a href="http://www.ebrd.com/pages/research/publications/special/transitionII.shtml">Life in Transition survey II</a>:sta vuodelta 2010 sekä maatason datana Göteborgin yliopiston )[The Quality of Government Instituten](http://www.qog.pol.gu.se/ datasta erilaista maatason indikaattoreista liittyen maan vaurauteen, demokratiaan, korruptioon sekä kansalaisten elinoloihin. Kaikki yllä olevat aineistot ovat <em>oikeita</em> aineistoja ja avoimesti käytettävissä.</p>
+
+<p>Työpajan tavoitteena oli:</p>
+
+<ul>
+<li>Antaa osallistujalle taidot omien tutkimusten data-analyysin suunnitteluun ja toteuttamiseen toistettavuuden näkökulmasta.</li>
+<li>Tehdä tutuksi uusimpia R-kielen sovelluksia data-analyysiin hallintaan</li>
+<li>Tehdä tutuksi erilaisia teknolgioita tulosten sähköiseen julkaisemiseen.</li>
+</ul>
+
+<h2>Mistä on kyse</h2>
+
+<p>Tässä blogipostauksessa esittelen tiivistettynä yhden vaihtoehdon toistettavaan työvirtaan, jonka tulokset on mahdollista julkaista perinteisinä toimisto-ohjelmien (MS Word, LibreOffice Writer) formaateissa, latex-pdf:nä sekä sähköisinä formaatteina <strong>html</strong> ja <strong>.epub</strong> -formaateissa. (epub-formaattia ei käsitellä tässä. Lue täältä lisää: <a href="http://johnmacfarlane.net/pandoc/epub.html">Creating an ebook with pandoc</a>)</p>
+
+<h2>Ohjelmistoympäristö ja jutun juju</h2>
+
+<p>Laskennalliset analyysit tehdään <a href="http://www.r-project.org/">R-kiellä</a>, jota käytetään <a href="http://www.rstudio.com/ide/">RStudio</a>-käyttöliittymästä käsin. Asiakirja kirjoitetaan <a href="http://daringfireball.net/projects/markdown/">Markdown</a>-merkintäkieleen pohjautuvaa <a href="http://www.rstudio.com/ide/docs/authoring/using_markdown">R Markdownia</a> käyttäen. R Markdown on siis yhdistelmä Markdown kielellä merkittyä tekstiä, jonka väliin on sijoitettu R-koodin <em>kimpaleita</em>.</p>
+
+<p>Tämä R-markdown dokumentti <em>kudotaan</em> <a href="http://yihui.name/knitr/">knitr</a>-paketin avulla tavanomaiseksi markdown-dokumentiksi. Knitr siis ajaa r-analyysit ja sijoittaa halutut analyysien tulosteet haluttuihin paikkoihin. Alla oleva demo on vain hyvin yksinkertainen esimerkki siitä, miten analyysi on mahdollista kirjoittaa.</p>
+
+<p>Markdown-muotoisen asiakirjan luomisen jälkeen peliin tulee käsittämätön <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>-asiakirjan kääntäjä. Berkeleyn yliopiston filosofian professorin <a href="http://johnmacfarlane.net/">John MacFarlanen</a> kehittämä ohjelma kääntää asiakirjoja eri formaattien välillä ja on erityisen kyvykän akateemisten tutkimusraporttien erityisvaatimusten kanssa. Pandocin avulla huolella laadittu R Markdown muotoinen analyysi on mahdollista kääntää käytännössä mihin tahansa muotoon, tietyin varauksin.</p>
+
+<h2>Ohjelmistoympäristön asentaminen</h2>
+
+<p>Mikäli haluat koko pandocin voiman käyttöön, niin tarvitset myös tex-asennuksen. Toisin sanoen seuraavan demon läpiajoon pitää asennettuna olla R, RStudio sekä pandoc sekä latex. Seuraavassa ohjeet miten se tapahtuu eri käyttöjärjestelmiin:</p>
+
+<ul>
+<li><a href="http://ftp.sunet.se/pub/lang/CRAN/">R-ohjelman asentaminen</a> - latauksen ja asennuksen kesto n. 60s.</li>
+<li><a href="http://www.rstudio.com/ide/download/">RStudion asentaminen</a> - latauksen ja asennuksen kesto n. 60s.</li>
+<li><a href="http://johnmacfarlane.net/pandoc/installing.html">Pandoc:in asentaminen</a> - latauksen ja asennuksen kesto n. 30s.</li>
+<li><a href="http://www.latex-project.org/ftp.html">Latex:in asentaminen linuxiin, Mac OS X:ään ja Windowsiin</a> - latauksen ja asennuksen kesto n. 60 min.</li>
+</ul>
+
+<p>R:ssä tulee lisäksi olla asennettuna paketit:</p>
+
+<p>install.packages(&quot;ggplot2&quot;) 
+install.packages(&quot;reshape2&quot;)
+install.packages(&quot;knitr&quot;)
+install.packages(&quot;markdown&quot;)
+install.packages(&quot;devtools&quot;)</p>
+
+<h2>Demoasiakirja</h2>
+
+<p>Demossa käytettävät tiedostot löytyvät zipattuna seuraavasta linkistä: <a href="http://markuskainu.fi/material/blog/toistettava/toistettava_pandoc.zip">toistettava_pandoc.zip</a></p>
+
+<p>Kansio pitää sisällään seuraavat neljä tiedostoa:</p>
+
+<ul>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file1.Rmd"><strong>file1.Rmd</strong> - Pelkistetty R Markdown muotoinen asiakirja</a></li>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file2.Rmd"><strong>file2.Rmd</strong> - Sama asiakirja “akateemisin lisämaustein”</a>
+
+<ul>
+<li>otsikkolohko pandoc-tyyliin</li>
+<li>lähdeviitteet pandoc-tyyliin</li>
+<li>abstrakti</li>
+</ul></li>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/bibtex.bib"><strong>bibtex.bib</strong> - muutama viite bibtex.muodossa</a></li>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/article.css"><strong>article.css</strong> - css-tyylitiedosto html-muotoiselle asiakirjalle</a></li>
+</ul>
+
+<p>Alla oleva video näyttää, miten voit luoda erimuotoiset asiakirja alkuperäistiedostoista. Videon alapuolella on molemmat .Rmd asiakirjojen koodit upotettuna.</p>
+
+<h3>Video</h3>
+
+<p><iframe src="http://player.vimeo.com/video/60892384" width="500" height="282" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/60892384">Toistettava analyysi knitr:n ja pandoc:n avulla R:ssä</a> from <a href="http://vimeo.com/user2534934">Markus Kainu</a> on <a href="https://vimeo.com">Vimeo</a>.</p></p>
+
+<h2>Valmiit asiakirjat</h2>
+
+<h3>File1</h3>
+
+<ul>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file1.pdf">pdf</a></li>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file1.html">html</a></li>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file1.odt">odt</a></li>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file1.docx">docx</a></li>
+</ul>
+
+<h3>File2</h3>
+
+<ul>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file2.pdf">pdf</a></li>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file2.html">html</a></li>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file2.odt">odt</a></li>
+<li><a href="http://markuskainu.fi/material/blog/toistettava/file2.docx">docx</a></li>
+</ul>
+
+
+<!--
+<small class="well" style="padding: 6px;">
+
+    Follow me on <a href="http://twitter.com/muuankarski">Twitter</a>.
+
+</small>
+-->
+
+<div style="margin: 15px 0; padding-top: 5px; border-top: 1px solid lightgray;">
+
+<small class="pull-right">
+    <a href="/blog/open/science/2013/03/08/tietokone-tutkijan-ohjeisto.html"
+    
+    >Tietokone tutkijan apuvälineenä -ohjeiston päivitys &rarr;</a>
+</small>
+
+
+
+<small>
+    <a href="/blog/r-project/2012/10/30/reproducible-R-R2wd-word.html" title="">&larr; Reproducible reports using R, R2wd-package and MS Word</a>
+</small>
+
+
+</div>
+
+<!--
+<div style="font-size: 85%;">
+Related Posts:
+<ul>
+
+    <li><a href="/blog/r-project/2013/11/14/world-values-survey-on-map.html" title="">Visualising World Values Survey on a Map in R</a></li>
+
+    <li><a href="/blog/tools/2013/10/15/markdown-pandoc-tieteellinen-teksti.html" title="">Markdown ja pandoc - tekstipohjaisen tieteellisen kirjoittamisen työvirta</a></li>
+
+    <li><a href="/blog/r-project/2013/09/17/economic-history-dataset-in-r.html" title="">Maddison Project database in R</a></li>
+
+</ul>
+</div>
+-->
+
+<!--
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'joshbranchaud'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+-->
+
+
+ <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'markuskainuresearchblog'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+
+
+		
+	</div>
+
+
+	
+	<!-- The main page footer can contain items such as copyright and contact information. It can also contain a duplicated navigation of your site which is not usually contained within a <nav> -->
+	<!-- ARIA: the landmark role "contentinfo" is added here as it contains metadata that applies to the parent document -->
+	<footer role="contentinfo" style="margin: 10px 5px;">
+
+        <small class="pull-right">With a little help from <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://getbootstrap.com/">Bootstrap</a></small>
+
+		<!-- Copyright information can be contained within the <small> element. The <time> element is used here to indicate that the '2012' is a date -->
+		<small>Copyright &copy; <a href="http://markuskainu.fi">Markus Kainu</a> <time datetime="2013">2013</time></small>
+		
+	</footer>
+
+    </div>
+	
+	
+</body>
+</html>
+

@@ -1,0 +1,51 @@
+---
+layout: rustfare
+title: rustfare
+---
+<div id="homepage">
+
+<section class="level2" id="examples-rosstat-regional-statistics">
+<h2>Examples: Rosstat regional statistics</h2>
+<p>Function <code>IndicatorRosstat()</code> returns a dataset with available indicators and metadata in Russian and English</p>
+<pre class="sourceCode r"><code class="sourceCode r">ind &lt;- <span class="kw">IndicatorRosstat</span>()
+ind[<span class="dv">1</span>:<span class="dv">3</span>, <span class="dv">1</span>:<span class="dv">3</span>]</code></pre>
+<p><a href="http://www.gks.ru/wps/wcm/connect/rosstat_main/rosstat/ru/statistics/publications/catalog/doc_1138623506156">Rosstat regional statistic</a> includes values of the indicators on three levels:</p>
+<ol type="1">
+<li>federal level</li>
+<li>federal district level</li>
+<li>regional level</li>
+</ol>
+<p>To dowload the data you may use <code>GetRosstat()</code>-function that requires two arguments,</p>
+<ol type="1">
+<li><code>indicator</code> (from the listing above),</li>
+<li><code>level</code> (federal/federal_district/region)</li>
+</ol>
+<p>The code below returns a dataset at <strong>federal district level</strong> on <strong>infant mortality</strong> and plots a line graph over time.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)  <span class="co"># load rustfare for obtaining the data</span>
+<span class="kw">library</span>(ggplot2)  <span class="co"># load ggplot2 for plotting</span>
+dat &lt;- <span class="kw">GetRosstat</span>(<span class="st">&quot;infant_mortality_rate&quot;</span>, <span class="st">&quot;federal_district&quot;</span>)
+<span class="kw">head</span>(dat, <span class="dv">3</span>)  <span class="co"># print the first 6 rows of data.frame</span></code></pre>
+<pre><code>##        id_name                               region year value
+## 1 дальневокруг Дальневосточный\r\nфедеральный округ 1995  20.5
+## 2 дальневокруг Дальневосточный\r\nфедеральный округ 2001  18.1
+## 3 дальневокруг Дальневосточный\r\nфедеральный округ 2000  18.6
+##                           region_ru                    region_en
+## 1 Дальневосточный федеральный округ Far Eastern Federal District
+## 2 Дальневосточный федеральный округ Far Eastern Federal District
+## 3 Дальневосточный федеральный округ Far Eastern Federal District
+##              level id_shape             indicator
+## 1 federal_district        4 infant_mortality_rate
+## 2 federal_district        4 infant_mortality_rate
+## 3 federal_district        4 infant_mortality_rate</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(dat, <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> value, <span class="dt">color =</span> region_en)) + <span class="kw">geom_point</span>() + <span class="kw">geom_line</span>() + 
+    <span class="kw">geom_text</span>(<span class="dt">data =</span> <span class="kw">subset</span>(dat, year == <span class="dv">2010</span>), <span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> value, <span class="dt">color =</span> region_en, 
+        <span class="dt">label =</span> region_en), <span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">hjust =</span> <span class="dv">1</span>) + <span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre>
+<figure>
+<img src="figure/rosstat.png" alt="Infant mortality rates at federal district level"><figcaption>Infant mortality rates at federal district level</figcaption>
+</figure>
+</section>
+
+
+</div>
+
+

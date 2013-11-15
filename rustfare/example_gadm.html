@@ -1,0 +1,107 @@
+---
+layout: rustfare
+title: rustfare
+---
+<div id="homepage">
+
+<section class="level2" id="examples-gadm-database-of-global-administrative-areas">
+<h2>Examples: GADM database of Global Administrative Areas</h2>
+</section>
+<section class="level2" id="introduction">
+<h2>Introduction</h2>
+<p>rustfare has functions for downloading a spatial shapefile from <a href="http://www.gadm.org/">Global Administrative Areas (GADM)</a> database that can be further used to for example plot the data from Rosstat regional data.</p>
+<p>Function <code>GetRusGADM()</code> downloads the shapefile at desired level. Level argument accepts four values:</p>
+<ul>
+<li><code>federal</code>: whole country</li>
+<li><code>federal_districts</code>: Federal districts (8)</li>
+<li><code>region</code>: administrative boundaries at the level of federal regions/oblasts (82)</li>
+<li><code>rayon</code>: administrative boundaries at the level of rayons/krais</li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">shapefile &lt;- <span class="kw">GetRusGADM</span>(level)</code></pre>
+</section>
+<section class="level2" id="plot-shapefiles">
+<h2>Plot shapefiles</h2>
+<section class="level3" id="at-federal-level">
+<h3>At federal level</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)
+shapefile &lt;- <span class="kw">GetRusGADM</span>(<span class="st">&quot;federal&quot;</span>)
+<span class="kw">plot</span>(shapefile)</code></pre>
+<figure>
+<img src="figure/map1.png" alt="plot of chunk map1"><figcaption>plot of chunk map1</figcaption>
+</figure>
+</section>
+<section class="level3" id="at-federal-district-level">
+<h3>At federal district level</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)
+shapefile &lt;- <span class="kw">GetRusGADM</span>(<span class="st">&quot;federal_district&quot;</span>)
+<span class="kw">plot</span>(shapefile)</code></pre>
+<figure>
+<img src="figure/map2.png" alt="plot of chunk map2"><figcaption>plot of chunk map2</figcaption>
+</figure>
+</section>
+<section class="level3" id="at-regional-level">
+<h3>At regional level</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)
+shapefile &lt;- <span class="kw">GetRusGADM</span>(<span class="st">&quot;region&quot;</span>)
+<span class="kw">plot</span>(shapefile)</code></pre>
+<figure>
+<img src="figure/map3.png" alt="plot of chunk map3"><figcaption>plot of chunk map3</figcaption>
+</figure>
+</section>
+<section class="level3" id="at-rayon-level">
+<h3>At rayon level</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)
+shapefile &lt;- <span class="kw">GetRusGADM</span>(<span class="st">&quot;rayon&quot;</span>)
+<span class="kw">plot</span>(shapefile)</code></pre>
+<figure>
+<img src="figure/map4.png" alt="plot of chunk map4"><figcaption>plot of chunk map4</figcaption>
+</figure>
+</section>
+</section>
+<section class="level2" id="combining-data-from-rosstat-regional-data-with-gadm-shapefile-and-visualizing-it">
+<h2>Combining data from Rosstat Regional Data with GADM shapefile and visualizing it</h2>
+<section class="level3" id="using-maptools-and-sp">
+<h3>Using maptools and sp</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)
+dat &lt;- <span class="kw">GetRosstat</span>(<span class="st">&quot;average_size_of_pensions&quot;</span>, <span class="st">&quot;federal_district&quot;</span>)</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">dat10 &lt;- <span class="kw">subset</span>(dat, year == <span class="dv">2010</span>)
+shape &lt;- <span class="kw">GetRusGADM</span>(<span class="st">&quot;federal_district&quot;</span>)
+<span class="kw">library</span>(maptools)
+<span class="kw">row.names</span>(dat10) &lt;- dat10$id_shape
+<span class="kw">row.names</span>(shape) &lt;- <span class="kw">as.character</span>(shape$ID_1)
+dat10 &lt;- dat10[<span class="kw">order</span>(<span class="kw">row.names</span>(dat10)), ]
+shape &lt;- shape[<span class="kw">order</span>(<span class="kw">row.names</span>(shape)), ]
+df &lt;- <span class="kw">spCbind</span>(shape, dat10)
+<span class="kw">library</span>(sp)
+<span class="kw">spplot</span>(df, <span class="st">&quot;value&quot;</span>, <span class="dt">col.regions =</span> <span class="kw">grey.colors</span>(<span class="dv">20</span>, <span class="fl">0.9</span>, <span class="fl">0.3</span>))</code></pre>
+<figure>
+<img src="figure/mapcombine.png" alt="plot of chunk mapcombine"><figcaption>plot of chunk mapcombine</figcaption>
+</figure>
+</section>
+<section class="level3" id="using-ggplot2">
+<h3>Using ggplot2</h3>
+<p>There is a <code>RosstatMapPlot</code>-function in rustfare that takes <code>measure</code>, <code>year</code> and <code>level</code> as arguments.</p>
+<section class="level4" id="infant-mortality-rate-at-regional-level">
+<h4>Infant mortality rate at regional level</h4>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)
+<span class="kw">RosstatMapPlot</span>(<span class="st">&quot;infant_mortality_rate&quot;</span>, <span class="dv">2010</span>, <span class="st">&quot;region&quot;</span>)</code></pre>
+<figure>
+<img src="figure/rosstatmap1.png" alt="plot of chunk rosstatmap1"><figcaption>plot of chunk rosstatmap1</figcaption>
+</figure>
+</section>
+<section class="level4" id="average-pension-size-at-federal-district-level">
+<h4>Average pension size at federal district level</h4>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)
+<span class="kw">RosstatMapPlot</span>(<span class="st">&quot;average_size_of_pensions&quot;</span>, <span class="dv">2010</span>, <span class="st">&quot;federal_district&quot;</span>)</code></pre>
+<figure>
+<img src="figure/rosstatmap2.png" alt="plot of chunk rosstatmap2"><figcaption>plot of chunk rosstatmap2</figcaption>
+</figure>
+</section>
+</section>
+</section>
+
+
+</div>
+
+

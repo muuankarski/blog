@@ -1,0 +1,249 @@
+---
+layout: post
+title:  "rustfare-package: Spatial visualization using Global Administrative Areas -data"
+date:   2013-08-12 11:53:45
+categories: R-project
+---
+
+rustfare has functions for downloading a spatial shapefile from [Global Administrative Areas (GADM)](http://www.gadm.org/) database that can be further used to for example plot the data from Rosstat regional data.
+
+In this post I will demonstrate how to access GADM geographical data and how to combine data from Rosstat Regional Statistics with GADM to visualize the data.
+
+## Accessing the GADM data using rustfare-package
+
+Function `GetRusGADM()` downloads the shapefile at desired level and returns a `SpatialPolygonDataFrame`. `Level` argument accepts four values:
+
+- `federal`: whole country
+- `federal_districts`: Federal districts (8)
+- `region`: administrative boundaries at the level of federal regions/oblasts (82)
+- `rayon`: administrative boundaries at the level of rayons/krais
+
+
+```{r, eval=TRUE, message=FALSE, eval=FALSE, cache=TRUE}
+shapefile <- GetRusGADM(level)
+```
+
+## Plotting shapefiles
+
+Once you have downloaded the `SpatialPolygonDataFrame` you can plot the  the boundaries at different level with following code chunks.
+
+### At federal level
+
+```{rmap1, cache=TRUE, message=FALSE, eval=TRUE, cache=TRUE}
+library(rustfare)
+shapefile <- GetRusGADM("federal")
+plot(shapefile)
+```
+
+### At federal district level
+
+```{rmap2, cache=TRUE, message=FALSE, eval=TRUE, cache=TRUE}
+library(rustfare)
+shapefile <- GetRusGADM("federal_district")
+plot(shapefile)
+```
+
+### At regional level
+
+```{rmap3,cache=TRUE, message=FALSE, eval=TRUE, cache=TRUE}
+library(rustfare)
+shapefile <- GetRusGADM("region")
+plot(shapefile)
+```
+
+### At rayon level
+
+```{rmap4,cache=TRUE, message=FALSE, eval=TRUE, cache=TRUE}
+library(rustfare)
+shapefile <- GetRusGADM("rayon")
+plot(shapefile)
+```
+
+
+
+## Merging Rosstat Regional data and visualising it
+
+In the below I will show two ways to visualise the data. I'm more familiar with **ggplot2**-graphics, and here I'm also taking it a bit further than using `spplot`-function from **sp**-package.
+
+### Using maptools and sp
+
+I'm downloading data on life expectancy of men at regional level from Rosstat.
+
+```{rmapcombine1, message=FALSE, eval=TRUE, cache=TRUE}
+library(rustfare)
+dat <- GetRosstat("life_expectancy_men",
+                   "region")
+dat09 <- subset(dat, year == 2009)
+```
+
+Then I'm downloading the shapefile at federal districh level, naming the rows as required for `spCbind`-function, ordering the datas and then combining them
+
+To be able to join the data they both must have a) equal number of rows and b) the rownames must match. Lets first give both data rownames that can be used in combining the data. Then let's order the both datas according to rownames. At last, lets see if there are same number of rows in both datas.
+
+```{rmapcombine22, message=FALSE, eval=TRUE, cache=TRUE}
+shape <- GetRusGADM("region")
+library(maptools)
+# Remove case with NA id_shape (moscow)
+dat09 <- dat09[!is.na(dat09$id_shape), ] 
+row.names(dat09) <- dat09$id_shape
+row.names(shape) <- as.character(shape$ID_1)
+dat09 <- dat09[order(row.names(dat09)),]
+shape <- shape[order(row.names(shape)),]
+dim(dat09)
+dim(shape)
+```
+
+As we deleted some cases from Rosstat data it now has two cases less than `SpatialPolygonDataFrame` before, we have to remove those rows from `SpatialPolygonDataFrame`. To find out what they are we use `setdiff()-function and we can see they are 2521 and 2530. We remove them and combine the datas.
+
+
+```{rmapcombine23, message=FALSE, eval=TRUE, cache=TRUE}
+setdiff(row.names(shape), row.names(dat09))
+shape <- shape[!row.names(shape) %in% c("2521","2530"), ]
+df <- spCbind(shape, dat09)
+```
+
+Simple grey scale plot can be done as follow
+
+```{rmapcombine3, message=FALSE, eval=TRUE, cache=TRUE}
+library(sp)
+spplot(df, "value", col.regions=grey.colors(20, 0.9, 0.3))
+```
+
+## Using ggplot2
+
+**ggplot2** is not perhaps the ideal choice for plotting spatial data as `SpatialPolygonDataFrame` has to be converted into regular data.frame using `fortify` and this procedure cannot be reversed very easy. However, once you have fortified the data you can take advantage of all the neat functionalities of ggplot2-package.
+
+We will use the code above for the great part. As we want to plot all the years available as facets of the same plot we have to alter the code in two ways. First, not to subset the data and, second, to convert it into **wide** format from the default **long** format that **rustfare** provides you with. Data will be **casted** into wide format using `dcast`-function in **reshape2**-package.
+
+```{rmapcombineggplot1, message=FALSE, eval=TRUE, cache=TRUE}
+library(rustfare)
+dat <- GetRosstat("life_expectancy_men",
+                   "region")
+# cast the data into wide format
+library(reshape2)
+dat.w <- dcast(dat, region_en + id_shape ~ year, value.var="value")
+```
+
+Then the data in wide format will be joined with shapefile from GADM.
+
+```{rmapcombineggplot2, message=FALSE, eval=TRUE, cache=TRUE}
+shape <- GetRusGADM("region")
+library(maptools)
+dat.w <- dat.w[!is.na(dat.w$id_shape), ] 
+row.names(dat.w) <- dat.w$id_shape
+row.names(shape) <- as.character(shape$ID_1)
+dat.w <- dat.w[order(row.names(dat.w)),]
+shape <- shape[order(row.names(shape)),]
+# from above
+difference <- setdiff(row.names(shape), row.names(dat.w))
+shape <- shape[!row.names(shape) %in% difference, ]
+#
+df <- spCbind(shape, dat.w)
+```
+
+Then the `SpatialPolygonDataFrame` must be converted into regular `data.frame`, and I'm using the `fortify`-function from **ggplot2**-package for it. We also need **rgeos*-package for this conversion.
+
+
+```{rmapcombineggplot3, message=FALSE, eval=TRUE, cache=TRUE}
+library(ggplot2)
+library(rgeos)
+df$id <- rownames(df@data)
+map.points <- fortify(df, region = "id")
+map.df <- merge(map.points, df, by = "id")
+dim(map.df)
+head(map.df, 2)
+```
+
+Now data we want to visualize is as a regular `data.frame` and ready for plotting. But one more thing is need: **ggplot2** eats data in long format, so we have to melt the data into long format using `melt`-function from **reshape2**-package.
+
+```{rmapcombineggplot4, message=FALSE, eval=TRUE, cache=TRUE}
+# As we want to plot map faceted by years 2000, 2005 and 2009 we have to
+# melt it into long format
+library(reshape2)
+map.df.l <- melt(data = map.df, 
+                 id.vars = c("id", "long", 
+                             "lat", "group"), 
+                 measure.vars = c("X2000","X2005","X2009"))
+# lets tweak a bit and remove X's from year values and make it into numerical
+map.df.l$variable <- str_replace_all(map.df.l$variable, "X","")
+map.df.l$variable <- factor(map.df.l$variable)
+map.df.l$variable <- as.numeric(levels(map.df.l$variable))[map.df.l$variable]
+dim(map.df.l)
+```
+
+As a result we get rather massive data with 1625088 rows and 6 columns. We can then plot this using the following command.
+
+```{rrmapcombineggplot5, message=FALSE, eval=TRUE, fig.height=16, fig.width=10, cache=TRUE}
+# plot faceted by year
+ggplot(map.df.l, aes(long,lat,group=group)) +
+  geom_polygon(aes(fill = value)) +
+  geom_polygon(data = map.df.l, aes(long,lat), 
+               fill=NA, 
+               color = "white",
+               size=0.1) + # white borders
+  coord_map(project="orthographic",
+            xlim=c(25,170),
+              ylim=c(45,70)) +
+  facet_wrap(~variable, ncol=1) +
+  theme_minimal()
+```
+
+### Plotting the changes from 2000 to 2009
+
+Let's take advantage of data we got after we merged the Rosstat data into `SpatialPolygonDataFrame`, which is `df`. Let's calculate the change from 2000 to 2009 and fortify the data into data.frame. And then we point that **ggplot2** applies red colors for negative values (where life expectancy has worsened) and green color fot positive values (where life expectancy has improved).
+
+
+```{rrmapcombineggplot6, message=FALSE, eval=TRUE, fig.height=6, fig.width=10, cache=TRUE}
+df$change <- (df$X2009 - df$X2000)/df$X2000*100
+df$X2000 <- NULL
+df$X2005 <- NULL
+df$X2009 <- NULL
+#
+library(ggplot2)
+library(rgeos)
+df$id <- rownames(df@data)
+map.points <- fortify(df, region = "id")
+map.df <- merge(map.points, df, by = "id")
+library(reshape2)
+map.df.l <- melt(data = map.df, 
+                 id.vars = c("id", "long", 
+                             "lat", "group"), 
+                 measure.vars = "change")
+ggplot(map.df.l, aes(long,lat,group=group)) +
+  geom_polygon(aes(fill = value)) +
+  scale_fill_gradient2(low = "red", high = "green") +
+  geom_polygon(data = map.df.l, aes(long,lat), 
+               fill=NA, 
+               color = "white",
+               size=0.1) + # white borders
+  coord_map(project="orthographic",
+            xlim=c(25,170),
+              ylim=c(45,70)) +
+  theme_minimal()
+
+
+```
+
+
+### RosstatMapPlot()-function
+
+There is a `RosstatMapPlot`-function in rustfare that takes `measure`, `year` and `level` as arguments and plots maps using the somewhat similar procedure as above. Have a look at examples below.
+
+### Infant mortality rate at regional level
+
+```{rrosstatmap1, cache=TRUE, fig.height=7, fig.width=9, message=FALSE, eval=TRUE, cache=TRUE}
+library(rustfare)
+RosstatMapPlot("infant_mortality_rate",2010,"region")
+```
+
+### Average pension size at federal district level
+
+```{rrosstatmap2, eval=TRUE, cache=TRUE, fig.height=7, fig.width=9, message=FALSE, eval=TRUE, cache=TRUE}
+library(rustfare)
+RosstatMapPlot("average_size_of_pensions",2010,"federal_district")
+```
+
+
+
+[jekyll-gh]: https://github.com/mojombo/jekyll
+[jekyll]:    http://jekyllrb.com

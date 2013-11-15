@@ -1,0 +1,48 @@
+---
+layout: rustfare
+title: rustfare
+---
+<div id="homepage">
+
+<section class="level2" id="examples-world-bank-world-development-indicators">
+<h2>Examples: World Bank World Development Indicators</h2>
+<p>As for <a href="http://data.worldbank.org/data-catalog/world-development-indicators">World Bank Development Indicators</a> rustfare relies on <a href="http://cran.r-project.org/web/packages/WDI/index.html">WDI-package</a> for which you can find examples here <a href="https://github.com/vincentarelbundock/WDI">github.com/vincentarelbundock/WDI</a>.</p>
+<p>With the following code you can plot GDP per capita (current US$) using log-scale from 1990 to 2011.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(WDI)
+<span class="kw">library</span>(ggplot2)
+<span class="co"># Search for GDP</span>
+<span class="kw">head</span>(<span class="kw">WDIsearch</span>(<span class="st">&#39;gdp&#39;</span>))</code></pre>
+<pre><code>##      indicator          
+## [1,] &quot;BG.GSR.NFSV.GD.ZS&quot;
+## [2,] &quot;BM.KLT.DINV.GD.ZS&quot;
+## [3,] &quot;BN.CAB.XOKA.GD.ZS&quot;
+## [4,] &quot;BN.CUR.GDPM.ZS&quot;   
+## [5,] &quot;BN.GSR.FCTY.CD.ZS&quot;
+## [6,] &quot;BN.KLT.DINV.CD.ZS&quot;
+##      name                                                                      
+## [1,] &quot;Trade in services (% of GDP)&quot;                                            
+## [2,] &quot;Foreign direct investment, net outflows (% of GDP)&quot;                      
+## [3,] &quot;Current account balance (% of GDP)&quot;                                      
+## [4,] &quot;Current account balance excluding net official capital grants (% of GDP)&quot;
+## [5,] &quot;Net income (% of GDP)&quot;                                                   
+## [6,] &quot;Foreign direct investment (% of GDP)&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># code for it NY.GDP.PCAP.CD</span>
+<span class="co"># dowload the data from 1990 to 2011</span>
+dat &lt;- <span class="kw">WDI</span>(<span class="dt">indicator=</span><span class="st">&#39;NY.GDP.PCAP.CD&#39;</span>, <span class="co"># indicator</span>
+           <span class="dt">country=</span><span class="st">&#39;RU&#39;</span>, <span class="co"># country/countries</span>
+           <span class="dt">start=</span><span class="dv">1990</span>, <span class="dt">end=</span><span class="dv">2011</span>) <span class="co"># time frame</span>
+dat$NY.GDP.PCAP.CD &lt;- <span class="kw">round</span>(dat$NY.GDP.PCAP.CD, <span class="dv">1</span>) <span class="co"># round the value to single decimal</span>
+<span class="kw">ggplot</span>(dat, <span class="kw">aes</span>(<span class="dt">x=</span>year,<span class="dt">y=</span>NY.GDP.PCAP.CD,
+                <span class="dt">group=</span>country,<span class="dt">label=</span>NY.GDP.PCAP.CD)) +
+  <span class="kw">geom_point</span>() + <span class="kw">geom_line</span>() + 
+  <span class="kw">geom_text</span>(<span class="dt">vjust=</span>-<span class="dv">1</span>, <span class="dt">size=</span><span class="dv">3</span>) +
+  <span class="kw">scale_y_log10</span>()</code></pre>
+<figure>
+<img src="figure/wbplot.png" alt="plot of chunk wbplot"><figcaption>plot of chunk wbplot</figcaption>
+</figure>
+</section>
+
+
+</div>
+
+

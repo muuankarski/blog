@@ -1,0 +1,31 @@
+---
+layout: post
+title:  "Uusi blogi avattu!"
+date:   2013-08-05 10:00:45
+categories: R-project
+---
+
+# Uusi blogi avattu
+
+
+
+
+{% highlight r %}
+data(mtcars)
+{% endhighlight %}
+
+
+
+{% highlight r %}
+library(ggplot2)
+ggplot(mtcars, aes(x = cyl, y = gear)) + geom_point()
+{% endhighlight %}
+
+![center](/figs/2013-08-05-uusi-blogi-avattu.Rmd~/autoplot.png) 
+
+
+
+
+
+[jekyll-gh]: https://github.com/mojombo/jekyll
+[jekyll]:    http://jekyllrb.com
