@@ -1,6 +1,5 @@
 ## Welcome to my home page
 
-<img style="float: right; padding: 5px;" src="/img/markus_majakka.jpeg" alt="me at märket lighthouse">
 
 I'm a **quantitatively orientated** social scientist specialized in **poverty** and **inequalities** in **post-socialist space**, and in **open source research software carpentry**. Based in Helsinki, Finland. Blog discusses mainly how R language can be applied in social science research. Mostly in English, sometimes in Finnish.
 

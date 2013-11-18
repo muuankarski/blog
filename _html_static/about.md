@@ -1,6 +1,9 @@
 <h1 style="text-align:left; font-size:22.5px">Work</h1>
 
+
 ## I do research
+
+<img style="float: right; padding: 5px;" src="/img/profile.jpg" alt="me at märket lighthouse">
 
 Currently I'm writing my PhD thesis for University of Turku under title *Poverty, place and public social redistribution - Analysis of poverty dynamics in post-socialist transition*. See [my Tuhat profile]([https://tuhat.halvi.helsinki.fi/portal/en/persons/markus-johannes-kai%280f0c1fba-496f-4306-b0f7-e7d9636fca6d%29.html) for up-to-date list of publications & activities
 
