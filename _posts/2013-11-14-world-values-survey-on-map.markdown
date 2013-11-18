@@ -60,13 +60,11 @@ I'm focusing only in the `yes` or `no` values, or in `yes` in particular.
 The data is not provided in any generic for but only in proprietary SAS/SPSS/Stata format, but using **foreign**-package it is doable. (a .csv or .Rdata would perhaps be a good idea in these days!)
 
 
-
-
 {% highlight r %}
 library(foreign)
 # Load the oridinal dataset into R
-datB <- read.dta("~/workspace/data/wvs/wvs2005_v20090901b.dta")
-datA <- read.dta("~/workspace/data/wvs/wvs2005_v20090901a.dta")
+datB <- read.dta("DATA_LOCATION_HERE/wvs2005_v20090901b.dta")
+datA <- read.dta("DATA_LOCATION_HERE/wvs2005_v20090901a.dta")
 # Create proportional tables from both data by country there are some issues
 # with country labels so I convert the variable into a string
 datA$v2 <- as.character(datA$v2)
@@ -80,6 +78,10 @@ tbl <- rbind(tblA, tblB)
 tbl2 <- tbl[tbl$Var2 %in% c("yes", "no"), ]
 tbl2$Var2 <- factor(tbl2$Var2, levels = c("yes", "no"))
 {% endhighlight %}
+
+
+
+
 
 
 ## Distribution of answers by country as histogram
@@ -114,25 +116,13 @@ I greatly recommend you to familiarize yourself with theoretical literature of s
 
 
 {% highlight r %}
-download.file("http://www.mappinghacks.com/data/TM_WORLD_BORDERS-0.2.zip", destfile = "NUTS_2010_60M_SH.zip")
+download.file("http://www.mappinghacks.com/data/TM_WORLD_BORDERS-0.2.zip", destfile = "worldborders.zip")
 # unzip to SpatialPolygonsDataFrame
-unzip("NUTS_2010_60M_SH.zip")
+unzip("worldborders.zip")
 library(rgdal)
-shape <- readOGR(dsn = "./", layer = "TM_WORLD_BORDERS-0.2")
+shape <- readOGR(dsn = "YOUR WORKING DIRECTORY HERE/", layer = "TM_WORLD_BORDERS-0.2")
 {% endhighlight %}
 
-
-
-
-{% highlight r %}
-# download.file('http://www.mappinghacks.com/data/TM_WORLD_BORDERS-0.2.zip',
-# destfile = 'NUTS_2010_60M_SH.zip') # unzip to SpatialPolygonsDataFrame
-# unzip('NUTS_2010_60M_SH.zip')
-library(rgdal)
-# shape <- readOGR(dsn = './', layer = 'TM_WORLD_BORDERS-0.2')
-shape <- readOGR(dsn = "/home/aurelius/workspace/data/shapefiles/world/TM_WORLD_BORDERS_SIMPL-0.3/", 
-    layer = "TM_WORLD_BORDERS_SIMPL-0.3")
-{% endhighlight %}
 
 
 

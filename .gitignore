@@ -2,7 +2,10 @@ _site
 .Rproj.user
 cache
 .Rhistory
+rustfare/
 rustfare/cache
 _deploy/
-rustfare/
 _R/cache
+komennot
+site_markuskainufi.Rproj
+htaccess
