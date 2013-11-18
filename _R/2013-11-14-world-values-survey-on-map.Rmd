@@ -60,9 +60,28 @@ opts_chunk$set(echo=TRUE,eval=TRUE, cache=TRUE,message=FALSE,warning=FALSE,fig.w
 
 The data is not provided in any generic for but only in proprietary SAS/SPSS/Stata format, but using **foreign**-package it is doable. (a .csv or .Rdata would perhaps be a good idea in these days!)
 
+```{rwvs1, echo=TRUE, eval=FALSE}
+library(foreign)
+# Load the oridinal dataset into R
+datB <- read.dta("DATA_LOCATION_HERE/wvs2005_v20090901b.dta")
+datA <- read.dta("DATA_LOCATION_HERE/wvs2005_v20090901a.dta")
+# Create  proportional tables from both data by country
+## there are some issues with country labels so I convert
+## the variable into a string
+datA$v2 <- as.character(datA$v2)
+datB$v2 <- as.character(datB$v2)
+# Create unweighted proportional tables from both datas
+tblA <- as.data.frame(prop.table(table(datA$v2,datA$v75),1)*100)
+tblB <- as.data.frame(prop.table(table(datB$v2,datB$v75),1)*100)
+# Combine the tables
+tbl <- rbind(tblA,tblB)
+# subset the tables to include only ues or no options
+tbl2 <- tbl[tbl$Var2 %in% c("yes","no"),]
+tbl2$Var2 <- factor(tbl2$Var2, levels=c("yes","no"))
+```
 
 
-```{rwvs, echo=TRUE, eval=TRUE}
+```{rwvs2, echo=FALSE, eval=TRUE}
 library(foreign)
 # Load the oridinal dataset into R
 datB <- read.dta("~/workspace/data/wvs/wvs2005_v20090901b.dta")
@@ -117,22 +136,17 @@ I greatly recommend you to familiarize yourself with theoretical literature of s
 
 ```{rwvsLoadShape1, echo=TRUE, eval=FALSE}
 download.file("http://www.mappinghacks.com/data/TM_WORLD_BORDERS-0.2.zip", 
-              destfile = "NUTS_2010_60M_SH.zip")
+              destfile = "worldborders.zip")
 # unzip to SpatialPolygonsDataFrame
-unzip("NUTS_2010_60M_SH.zip")
+unzip("worldborders.zip")
 library(rgdal)
-shape <- readOGR(dsn = "./", 
+shape <- readOGR(dsn = "YOUR WORKING DIRECTORY HERE/", 
                  layer = "TM_WORLD_BORDERS-0.2")
 ```
 
 
-```{rwvsLoadShape2}
-# download.file("http://www.mappinghacks.com/data/TM_WORLD_BORDERS-0.2.zip", 
-#               destfile = "NUTS_2010_60M_SH.zip")
-# # unzip to SpatialPolygonsDataFrame
-# unzip("NUTS_2010_60M_SH.zip")
+```{rwvsLoadShape2, echo=FALSE}
 library(rgdal)
-# shape <- readOGR(dsn = "./", layer = "TM_WORLD_BORDERS-0.2")
 shape <- readOGR(dsn = "/home/aurelius/workspace/data/shapefiles/world/TM_WORLD_BORDERS_SIMPL-0.3/", layer = "TM_WORLD_BORDERS_SIMPL-0.3")
 ```
 

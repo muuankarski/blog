@@ -3,4 +3,6 @@ _site
 cache
 .Rhistory
 rustfare/cache
-_deploy
+_deploy/
+rustfare/
+_R/cache
