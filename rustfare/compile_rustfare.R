@@ -1,6 +1,6 @@
 #!/usr/bin/Rscript
 
-setwd("~/workspace/web/markuskainu/rustfare")
+setwd("~/workspace/web/site_markuskainufi/rustfare")
 library(kaRski)
 # knit examples
 knitpandoc("index")

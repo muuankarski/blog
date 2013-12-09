@@ -2,7 +2,7 @@
 
 **rustfare**: *toolbox for R language for open welfare data from Russian Federation*
 
-This site has examples on how to use rustfare-package and up-to-date package-documentation, same as delivered with the package itself. Click here for [rustfare on Github](https://github.com/muuankarski/rustfare).
+This site has examples on how to use rustfare-package and up-to-date package-documentation, same as delivered with the package itself. Click here for [rustfare on Github](https://github.com/rOpenGov/rustfare).
 
 ## rustfare-package
 
@@ -15,7 +15,7 @@ This site has examples on how to use rustfare-package and up-to-date package-doc
     - GADM database of Global Administrative Areas. 
     - World Bank World Development Indicators on Russian Federation can be accessed using [WDI-package](http://cran.r-project.org/web/packages/WDI/index.html) (for examples, see: [markuskainu.fi/r-tutorial/wb/](http://markuskainu.fi/r-tutorial/wb/)
 
-## To-do list (20130610)
+## To-do list (20131115)
 - Change the source of Rosstat raw data from [Rosstat Regional statistics](http://www.gks.ru/wps/wcm/connect/rosstat_main/rosstat/ru/statistics/publications/catalog/doc_1138623506156) to [fedstat.ru](http://fedstat.ru/indicators/start.do) and [hub.opengovdata.ru](http://hub.opengovdata.ru/).
 - To incorporate [census data from 2002](http://std.gmcrosstata.ru/webapi/opendatabase?id=vpn2002_pert) and [election data from duma election 2011](http://www.vybory.izbirkom.ru/region/region/izbirkom?action=show&root=1&tvd=100100028713304&vrn=100100028713299&region=0&global=1&sub_region=0&prver=0&pronetvd=null&vibid=100100028713304&type=233) with the package
 
@@ -24,7 +24,7 @@ This site has examples on how to use rustfare-package and up-to-date package-doc
 
 ```r
 library(devtools)
-install_github(repo = "rustfare", username = "muuankarski")
+install_github(repo = "rustfare", username = "rOpenGov")
 library(rustfare)
 ```
 

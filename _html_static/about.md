@@ -7,7 +7,7 @@
 
 Currently I'm writing my PhD thesis for University of Turku under title *Poverty, place and public social redistribution - Analysis of poverty dynamics in post-socialist transition*. See [my Tuhat profile]([https://tuhat.halvi.helsinki.fi/portal/en/persons/markus-johannes-kai%280f0c1fba-496f-4306-b0f7-e7d9636fca6d%29.html) for up-to-date list of publications & activities
 
-- See my cv: [Curriculum_Vitate_Markus_Kainu](http://markuskainu.fi/material/cv/cv_eng.pdf)
+- See my cv: [Curriculum_Vitae_Markus_Kainu](http://markuskainu.fi/material/cv/cv_eng.pdf)
 
 ### Affiliation
 

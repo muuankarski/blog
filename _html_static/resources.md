@@ -3,7 +3,8 @@
 ## R-language
 
 - [rustfare-package](/rustfare) - *toolbox for R language for open welfare data from Russian Federation*
-    - [ROpenGov](http://ropengov.github.io/) - *Future direction for rustfare-package*
+- [rQoG-package](/rqog) - *Search, extract and format data from the Quality of Government Institute data*
+    - [ROpenGov](http://ropengov.github.io/) - *Host project for rustfare and rQoG -packages*
 - [karskitools-package](/karskitools) - *Collection of functions to facilitate reproducible analysis with R, knitr and pandoc*
 - [personal code repository](/r-tutorial) - *miscellaneous R-code for statistical programming*
 

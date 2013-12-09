@@ -80,13 +80,6 @@ plot(shapefile)
 ```r
 library(rustfare)
 dat <- GetRosstat("average_size_of_pensions", "federal_district")
-```
-
-```
-## Warning: NAs introduced by coercion
-```
-
-```r
 dat10 <- subset(dat, year == 2010)
 shape <- GetRusGADM("federal_district")
 library(maptools)

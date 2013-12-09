@@ -8,6 +8,13 @@ Function `IndicatorOecd()` returns a data.frame with all the indicators listed.
 
 ```r
 library(rustfaRe)
+```
+
+```
+## Error: there is no package called 'rustfaRe'
+```
+
+```r
 head(IndicatorOecd())
 ```
 
@@ -26,6 +33,13 @@ for plotting employment rates of different age classes you can try the following
 
 ```r
 library(rustfaRe)
+```
+
+```
+## Error: there is no package called 'rustfaRe'
+```
+
+```r
 library(ggplot2)
 dat14_24 <- GetOecd("employment_rate_in_population_aged_15-24")
 dat25_54 <- GetOecd("employment_rate_in_population_aged_25-54")

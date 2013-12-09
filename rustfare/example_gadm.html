@@ -63,9 +63,8 @@ shapefile &lt;- <span class="kw">GetRusGADM</span>(<span class="st">&quot;rayon&
 <section class="level3" id="using-maptools-and-sp">
 <h3>Using maptools and sp</h3>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rustfare)
-dat &lt;- <span class="kw">GetRosstat</span>(<span class="st">&quot;average_size_of_pensions&quot;</span>, <span class="st">&quot;federal_district&quot;</span>)</code></pre>
-<pre><code>## Warning: NAs introduced by coercion</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">dat10 &lt;- <span class="kw">subset</span>(dat, year == <span class="dv">2010</span>)
+dat &lt;- <span class="kw">GetRosstat</span>(<span class="st">&quot;average_size_of_pensions&quot;</span>, <span class="st">&quot;federal_district&quot;</span>)
+dat10 &lt;- <span class="kw">subset</span>(dat, year == <span class="dv">2010</span>)
 shape &lt;- <span class="kw">GetRusGADM</span>(<span class="st">&quot;federal_district&quot;</span>)
 <span class="kw">library</span>(maptools)
 <span class="kw">row.names</span>(dat10) &lt;- dat10$id_shape
