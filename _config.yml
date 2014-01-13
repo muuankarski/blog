@@ -3,7 +3,22 @@ title: Markus Kainu
 url: http://markuskainu.fi
 description: Social scientific research blog by Markus Kainu
 exclude: [/cache, komennot]
-markdown: redcarpet
 pygments: true
-destination: _deploy
+markdown: redcarpet
+redcarpet:
+  extensions: ["tables"]
+destination: _site
 permalink: /blog/:categories/:year/:month/:day/:title.html
+
+# Analytics
+analytics:
+  google:
+    # eg. 'UA-123-12'
+    id: 'UA-46324386-1'
+    
+     # Sharing settings
+sharing:
+  twitter: true
+  facebook: true
+  gplus: true
+  hn: true

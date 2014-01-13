@@ -12,23 +12,6 @@ categories: R-project
 
 {% highlight r %}
 library(WDI)
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## Loading required package: RJSONIO
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## Loading required package: methods
-{% endhighlight %}
-
-
-
-{% highlight r %}
 dat <- WDI(indicator = c("NY.GDP.PCAP.KD"), country = c("CN", "RU", "IN", "BR"), 
     start = 1980, end = 2012)
 library(ggplot2)
@@ -40,11 +23,6 @@ ggplot(dat, aes(year, NY.GDP.PCAP.KD, color = country)) + geom_line() + geom_poi
 
 {% highlight text %}
 ## Warning: Removed 9 rows containing missing values (geom_path).
-{% endhighlight %}
-
-
-
-{% highlight text %}
 ## Warning: Removed 9 rows containing missing values (geom_point).
 {% endhighlight %}
 

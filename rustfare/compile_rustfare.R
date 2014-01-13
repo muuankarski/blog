@@ -1,17 +1,6 @@
 #!/usr/bin/Rscript
 
 setwd("~/workspace/web/site_markuskainufi/rustfare")
-library(kaRski)
+library(knitr)
 # knit examples
-knitpandoc("index")
-system("pandoc --section-divs -t html5 -s --template rustfare.template -o index.html index.md")
-knitpandoc("example_rosstat")
-system("pandoc --section-divs -t html5 -s --template rustfare.template -o example_rosstat.html example_rosstat.md")
-knitpandoc("example_oecd")
-system("pandoc --section-divs -t html5 -s --template rustfare.template -o example_oecd.html example_oecd.md")
-knitpandoc("example_worldbank")
-system("pandoc --section-divs -t html5 -s --template rustfare.template -o example_worldbank.html example_worldbank.md")
-knitpandoc("example_qog")
-system("pandoc --section-divs -t html5 -s --template rustfare.template -o example_qog.html example_qog.md")
-knitpandoc("example_gadm")
-system("pandoc --section-divs -t html5 -s --template rustfare.template -o example_gadm.html example_gadm.md")
+knit("index.Rmd")

@@ -194,7 +194,7 @@ shape <- shape[order(row.names(shape)), ]
 # from above
 difference <- setdiff(row.names(shape), row.names(dat.w))
 shape <- shape[!row.names(shape) %in% difference, ]
-#
+# 
 df <- spCbind(shape, dat.w)
 {% endhighlight %}
 

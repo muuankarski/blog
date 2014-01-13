@@ -16,7 +16,7 @@ As a plotted data we use the nuts2-level rates of material deprivation which we 
 {% highlight r %}
 library(SmarterPoland)
 df <- getEurostatRaw(kod = "ilc_mddd21")
-#
+# 
 names(df) <- c("xx", 2011:2003)
 
 df$unit <- lapply(strsplit(as.character(df$xx), ","), "[", 1)
@@ -75,7 +75,7 @@ dim(df)
 
 
 {% highlight text %}
-## [1] 223  13
+## [1] 204  13
 {% endhighlight %}
 
 
@@ -114,13 +114,13 @@ library(rgeos)
 shape$id <- rownames(shape@data)
 map.points <- fortify(shape, region = "id")
 map.df <- merge(map.points, shape, by = "id")
-# As we want to plot map faceted by years from 2003 to 2011 we have to
-# melt it into long format
+# As we want to plot map faceted by years from 2003 to 2011 we have to melt
+# it into long format
 library(reshape2)
 map.df.l <- melt(data = map.df, id.vars = c("id", "long", "lat", "group"), measure.vars = c("X2003", 
     "X2004", "X2005", "X2006", "X2007", "X2008", "X2009", "X2010", "X2011"))
-# year variable (variable) is class string and type X20xx.  Lets remove
-# the X and convert it to numerical
+# year variable (variable) is class string and type X20xx.  Lets remove the
+# X and convert it to numerical
 library(stringr)
 map.df.l$variable <- str_replace_all(map.df.l$variable, "X", "")
 map.df.l$variable <- factor(map.df.l$variable)

@@ -23,6 +23,17 @@ library(reshape2)
 library(ggplot2)
 library(stringr)
 library(gpclib)
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## Error: there is no package called 'gpclib'
+{% endhighlight %}
+
+
+
+{% highlight r %}
 library(RColorBrewer)
 library(mapproj)
 library(maptools)
@@ -35,8 +46,6 @@ library(car)
 
 
 {% highlight r %}
-####################################
-#################################### 
 #################################### rankidata ssl:n Irmasta
 
 temp <- tempfile()
@@ -110,8 +119,6 @@ df.h <- rbind(df.h16, df.h18, df.h20, df.h21, df.h35, df.h40, df.h45, df.h50,
     df.h55, df.h60, df.h65, df.h70, df.h75)
 df.h$sex[df.h$Place < 2000] <- "herr"
 
-####################################
-#################################### 
 #################################### Women d16
 download.file("https://irma.suunnistusliitto.fi/irma/haku/ranki?id=6800&laji=SUUNNISTUS", 
     destfile = temp, method = "curl")
@@ -185,28 +192,18 @@ df.d$sex[df.d$Place < 2000] <- "damen"
 
 df <- rbind(df.d, df.h)
 
-####################################
-#################################### 
-#################################### Next, we need a data file where
-#################################### clubnames are linked with town and
-#################################### their coordinates You can make the
-#################################### data, 1. by taking the list of clubs
-#################################### from here:
-#################################### https://irma.suunnistusliitto.fi/irma/public/club/list
-#################################### And, A good tutorial for making the
-#################################### geocoding can be found in here
+#################################### Next, we need a data file where clubnames are linked with town and their
+#################################### coordinates You can make the data, 1. by taking the list of clubs from
+#################################### here: https://irma.suunnistusliitto.fi/irma/public/club/list And, A good
+#################################### tutorial for making the geocoding can be found in here
 #################################### http://allthingsr.blogspot.fi/2012/01/geocode-your-data-using-r-json-and.html
-#################################### 
-#################################### Here I'm provind a link to a file
-#################################### Load a data, which structures as
+#################################### Here I'm provind a link to a file Load a data, which structures as
 #################################### Town,Club,lat,long
 
 df.loc <- read.csv("http://markuskainu.fi/data/blog/df.seura.loc.en.csv")
 
 df.x <- join(df, df.loc, by = "Club")
 
-####################################
-#################################### 
 #################################### Suomen shapefile GADM-tietokannasta
 library(sp)
 con <- url("http://gadm.org/data/rda/FIN_adm0.RData")
@@ -231,7 +228,7 @@ gpclibPermit()
 
 
 {% highlight text %}
-## [1] TRUE
+## [1] FALSE
 {% endhighlight %}
 
 
@@ -257,9 +254,7 @@ df.x.h21 <- subset(df.x.h21, Place < 101)
 cnames <- df.x.h21[-which(duplicated(df.x.h21$Club)), ]
 
 ggplot(gadm.df, aes(long,lat,group=group)) +
-  geom_polygon(fill="Azure 1", color = "Dark Gray") + 
-  coord_map(project="azequidistant") +
-  geom_point(data=df.x.h21, aes(long,lat, group=Club, color=Place), size=3, #shape=1,
+  geom_polygon(fill="Azure 1", color = "Dark Gray") + geom_point(data=df.x.h21, aes(long,lat, group=Club, color=Place), size=3, #shape=1,
              position=position_jitter(width=.1,height=.1)) +
   coord_map(project="orthographic") + 
   geom_text(data=cnames, aes(long, lat, label = Club, group=Club), 
@@ -274,8 +269,6 @@ ggplot(gadm.df, aes(long,lat,group=group)) +
 
 {% highlight r %}
 
-###########################################
-########################################### 
 ########################################### Kaikki yhdellä kartalla
 cnames <- df.x[-which(duplicated(df.x$Club)), ]
 

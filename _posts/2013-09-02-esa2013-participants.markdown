@@ -74,12 +74,12 @@ head(oral.df[order(-oral.df$Freq), ])
 
 {% highlight text %}
 ##                 University Freq
-## 791 University of Helsinki   41
-## 916    University of Turin   40
-## 929   University of Warsaw   36
-## 212       Ghent University   29
-## 346                 Lisbon   25
-## 350                 London   25
+## 788 University of Helsinki   41
+## 913    University of Turin   40
+## 926   University of Warsaw   36
+## 210       Ghent University   29
+## 343                 Lisbon   25
+## 347                 London   25
 {% endhighlight %}
 
 
@@ -128,11 +128,11 @@ head(distributed.df[order(-distributed.df$Freq), ])
 
 {% highlight text %}
 ##                                 University Freq
-## 45                  University of Helsinki    4
-## 22                                  Moscow    3
-## 27 St. Petersburg State Medical University    3
-## 47                  University of Lausanne    3
-## 16                 Kore University of Enna    2
+## 43                  University of Helsinki    4
+## 21                                  Moscow    3
+## 26 St. Petersburg State Medical University    3
+## 45                  University of Lausanne    3
+## 15                 Kore University of Enna    2
 ## 1                                  Antalya    1
 {% endhighlight %}
 
@@ -195,13 +195,13 @@ head(plot.df2, 3)
 
 {% highlight text %}
 ##                           University Freq rank
-## 1                             Ankara   15 21.0
-## 2 Autonomous University of Barcelona   10 45.5
+## 1                             Ankara   15 21.5
+## 2 Autonomous University of Barcelona   10 45.0
 ## 3                             Berlin   20  8.5
-##                            RankUniversity    lon   lat
-## 1                               21 Ankara 32.854 39.92
-## 2 45.5 Autonomous University of Barcelona  2.173 41.39
-## 3                              8.5 Berlin 13.406 52.52
+##                          RankUniversity    lon   lat
+## 1                           21.5 Ankara 32.854 39.92
+## 2 45 Autonomous University of Barcelona  2.173 41.39
+## 3                            8.5 Berlin 13.405 52.52
 {% endhighlight %}
 
 

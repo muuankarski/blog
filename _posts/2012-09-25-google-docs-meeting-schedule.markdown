@@ -28,11 +28,6 @@ library(RCurl)
 
 {% highlight text %}
 ## Loading required package: methods
-{% endhighlight %}
-
-
-
-{% highlight text %}
 ## Loading required package: bitops
 {% endhighlight %}
 
@@ -42,23 +37,6 @@ library(RCurl)
 library(ggplot2)
 library(reshape2)
 library(car)
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## Loading required package: MASS
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## Loading required package: nnet
-{% endhighlight %}
-
-
-
-{% highlight r %}
 library(plyr)
 library(stringr)
 # copy the url of the csv-file from google docs

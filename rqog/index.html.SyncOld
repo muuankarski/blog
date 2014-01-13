@@ -1,0 +1,133 @@
+---
+layout: rqog
+title: rqog
+---
+<div id="homepage">
+
+<section class="level2" id="main">
+<h2>Main</h2>
+<p><strong>rQog</strong>: <em>Search, extract and format data from the Quality of Government Institute data</em></p>
+<p>Quotation from <a href="http://www.qog.pol.gu.se/">Quality of Governance institute website</a></p>
+<blockquote>
+<p>The QoG Institute was founded in 2004 by Professor Bo Rothstein and Professor Sören Holmberg. It is an independent research institute within the Department of Political Science at the University of Gothenburg. We conduct and promote research on the causes, consequences and nature of Good Governance and the Quality of Government (QoG) - that is, trustworthy, reliable, impartial, uncorrupted and competent government institutions.</p>
+</blockquote>
+<blockquote>
+<p>The main objective of our research is to address the theoretical and empirical problem of how political institutions of high quality can be created and maintained. A second objective is to study the effects of Quality of Government on a number of policy areas, such as health, the environment, social policy, and poverty. We approach these problems from a variety of different theoretical and methodological angles.</p>
+</blockquote>
+<p><strong>Quality of Government institute</strong> provides data in five different data sets</p>
+<ol type="1">
+<li><a href="http://www.qog.pol.gu.se/data/datadownloads/qogbasicdata/">QoG Basic Data</a></li>
+<li><a href="http://www.qog.pol.gu.se/data/datadownloads/qogstandarddata/">QoG Standard Data</a></li>
+<li><a href="http://www.qog.pol.gu.se/data/datadownloads/qogsocialpolicydata/">QoG Social Policy Data</a></li>
+<li><a href="http://www.qog.pol.gu.se/data/datadownloads/qogexpertsurveydata/">QoG Expert Survey Data</a></li>
+<li><a href="http://www.qog.pol.gu.se/data/datadownloads/qogeuregionaldata/">QoG EU Regional Data</a></li>
+</ol>
+<p><strong>rQog</strong>-package provides access to <strong>Basic</strong> and <strong>Standard</strong> datasets through functions <code>getQogBasic()</code> and <code>getQogStandard()</code>. <strong>Standard</strong> data has all the same indicators as in <strong>Basic</strong> data (143 variables) and an additional 585 indicators.</p>
+<p>Quality of Government Institute provides codebooks for all datasets (see <a href="http://www.qogdata.pol.gu.se/codebook/codebook_basic_30aug13.pdf">Basic codebook</a> and <a href="http://www.qogdata.pol.gu.se/codebook/codebook_standard_15may13.pdf">Standard codebook</a>) and you should use the codebooks to find the indicator code you are interested in and pass it to either of two functions.</p>
+</section>
+<section class="level2" id="installation">
+<h2>Installation</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
+<span class="kw">install_github</span>(<span class="dt">repo =</span> <span class="st">&quot;rQog&quot;</span>, <span class="dt">username =</span> <span class="st">&quot;muuankarski&quot;</span>)
+<span class="kw">library</span>(rQog)</code></pre>
+</section>
+<section class="level2" id="examples">
+<h2>Examples</h2>
+<section class="level3" id="basic-data">
+<h3>Basic Data</h3>
+<p>Basic data has a limited selection of most common indicators incluidng totally 143 variables. Below is an example on how to extract data on human development index and Democracy (Freedom House/Polity) index from BRIC-countries and plot it.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rQog)
+dat &lt;- <span class="kw">getQogBasic</span>(<span class="dt">country =</span> <span class="kw">c</span>(<span class="st">&quot;Russia&quot;</span>,<span class="st">&quot;China&quot;</span>,<span class="st">&quot;India&quot;</span>,<span class="st">&quot;Brazil&quot;</span>), <span class="co"># country,countries</span>
+              <span class="dt">indicator=</span><span class="kw">c</span>(<span class="st">&quot;undp_hdi&quot;</span>,<span class="st">&quot;fh_polity2&quot;</span>)) <span class="co"># indicator(s)</span>
+<span class="kw">library</span>(ggplot2)
+<span class="kw">ggplot</span>(dat, <span class="kw">aes</span>(<span class="dt">x=</span>year,<span class="dt">y=</span>value,<span class="dt">color=</span>cname)) + 
+  <span class="kw">geom_point</span>() + <span class="kw">geom_line</span>() +
+  <span class="kw">geom_text</span>(<span class="dt">data=</span><span class="kw">merge</span>(dat,<span class="kw">aggregate</span>(year ~ cname, dat, max),
+                     <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;year&quot;</span>,<span class="st">&quot;cname&quot;</span>)),
+          <span class="kw">aes</span>(<span class="dt">x=</span>year,<span class="dt">y=</span>value,<span class="dt">label=</span>cname),
+          <span class="dt">hjust=</span><span class="dv">1</span>,<span class="dt">vjust=</span>-<span class="dv">1</span>,<span class="dt">size=</span><span class="dv">3</span>,<span class="dt">alpha=</span>.<span class="dv">8</span>) +
+  <span class="kw">facet_wrap</span>(~indicator, <span class="dt">scales=</span><span class="st">&quot;free&quot;</span>) +
+  <span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>)</code></pre>
+<figure>
+<img src="figure/ExampleBasic.png" alt="plot of chunk ExampleBasic"><figcaption>plot of chunk ExampleBasic</figcaption>
+</figure>
+</section>
+<section class="level3" id="standard-data">
+<h3>Standard Data</h3>
+<p>Standard data includes a all the indicators 748 variables. Below is an example on how to extract data on <em>Environmental Performance Index</em> and <em>Party of Chief Executive: How Long in Office</em> from BRIC-countries and plot it.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rQog)
+dat &lt;- <span class="kw">getQogStandard</span>(<span class="dt">country =</span> <span class="kw">c</span>(<span class="st">&quot;Russia&quot;</span>,<span class="st">&quot;China&quot;</span>,<span class="st">&quot;India&quot;</span>,<span class="st">&quot;Brazil&quot;</span>), <span class="co"># country,countries</span>
+              <span class="dt">indicator=</span><span class="kw">c</span>(<span class="st">&quot;epi_epi&quot;</span>,<span class="st">&quot;dpi_hlio&quot;</span>)) <span class="co"># indicator(s)</span>
+<span class="kw">library</span>(ggplot2)
+<span class="kw">ggplot</span>(dat, <span class="kw">aes</span>(<span class="dt">x=</span>year,<span class="dt">y=</span>value,<span class="dt">color=</span>cname)) + 
+  <span class="kw">geom_point</span>() + <span class="kw">geom_line</span>() +
+  <span class="kw">geom_text</span>(<span class="dt">data=</span><span class="kw">merge</span>(dat,<span class="kw">aggregate</span>(year ~ cname, dat, max),
+                     <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;year&quot;</span>,<span class="st">&quot;cname&quot;</span>)),
+          <span class="kw">aes</span>(<span class="dt">x=</span>year,<span class="dt">y=</span>value,<span class="dt">label=</span>cname),
+          <span class="dt">hjust=</span><span class="dv">1</span>,<span class="dt">vjust=</span>-<span class="dv">1</span>,<span class="dt">size=</span><span class="dv">3</span>,<span class="dt">alpha=</span>.<span class="dv">8</span>) +
+  <span class="kw">facet_wrap</span>(~indicator, <span class="dt">scales=</span><span class="st">&quot;free&quot;</span>) +
+  <span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>)</code></pre>
+<figure>
+<img src="figure/ExampleStandard.png" alt="plot of chunk ExampleStandard"><figcaption>plot of chunk ExampleStandard</figcaption>
+</figure>
+</section>
+<section class="level3" id="spatial-visualisation-of-quality-of-government-data">
+<h3>Spatial visualisation of Quality of Government data</h3>
+<p>Here I'm downloading the whole world shapefile from www-mappinghacks.com. I'm taking a bit of a shortcut here as I'm converting the <code>SpatialPolygonDataFrame</code> right away into regular <code>data.frame</code> using <code>fortify</code>-function from <strong>ggplot2</strong>. Thereafter I extract the <em>Enviromental Performance Index</em> from <strong>Standard</strong> data and merge it with map data and plot whole world using mercator projetion. Grey color stands for missing data.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">download.file</span>(<span class="st">&quot;http://www.mappinghacks.com/data/TM_WORLD_BORDERS-0.2.zip&quot;</span>, <span class="dt">destfile =</span> <span class="st">&quot;worldborders.zip&quot;</span>)
+<span class="co"># unzip to SpatialPolygonsDataFrame</span>
+<span class="kw">unzip</span>(<span class="st">&quot;worldborders.zip&quot;</span>)
+<span class="kw">library</span>(rgdal)
+shape &lt;- <span class="kw">readOGR</span>(<span class="dt">dsn =</span> <span class="st">&quot;./&quot;</span>, <span class="dt">layer =</span> <span class="st">&quot;TM_WORLD_BORDERS-0.2&quot;</span>)</code></pre>
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;./&quot;, layer: &quot;TM_WORLD_BORDERS-0.2&quot;
+## with 246 features and 11 fields
+## Feature type: wkbPolygon with 2 dimensions</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># fortify the data</span>
+<span class="kw">library</span>(ggplot2)
+shape$id &lt;- <span class="kw">rownames</span>(shape@data)
+map.points &lt;- <span class="kw">fortify</span>(shape, <span class="dt">region =</span> <span class="st">&quot;id&quot;</span>)
+map.df &lt;- <span class="kw">merge</span>(map.points, shape, <span class="dt">by =</span> <span class="st">&quot;id&quot;</span>)
+## laod the data with all countries
+dat &lt;- <span class="kw">getQogStandard</span>(<span class="dt">country =</span> <span class="st">&quot;all&quot;</span>, <span class="co"># country,countries</span>
+              <span class="dt">indicator=</span><span class="kw">c</span>(<span class="st">&quot;epi_epi&quot;</span>),
+                      <span class="dt">year =</span> <span class="dv">2008</span>) <span class="co"># indicator(s)</span>
+<span class="co"># merge the datas using country names</span>
+map.df &lt;- <span class="kw">merge</span>(map.df, dat, <span class="dt">by.x =</span> <span class="st">&quot;NAME&quot;</span>, <span class="dt">by.y =</span> <span class="st">&quot;cname&quot;</span>, <span class="dt">all.x =</span> <span class="ot">TRUE</span>)
+<span class="co"># order the data for smooth plotting</span>
+map.df &lt;- map.df[<span class="kw">order</span>(map.df$order), ]
+
+<span class="kw">library</span>(ggplot2)
+<span class="kw">ggplot</span>(map.df, <span class="kw">aes</span>(long,lat,<span class="dt">group=</span>group)) +
+  <span class="kw">geom_polygon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span>value)) +
+  <span class="kw">geom_polygon</span>(<span class="dt">data =</span> map.df, <span class="kw">aes</span>(long,lat), 
+               <span class="dt">fill=</span><span class="ot">NA</span>, 
+               <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>,
+               <span class="dt">size=</span><span class="fl">0.1</span>) + <span class="co"># white borders</span>
+  <span class="kw">scale_fill_gradient2</span>(<span class="dt">low=</span><span class="st">&quot;white&quot;</span>, <span class="dt">high=</span><span class="st">&quot;blue&quot;</span>)+
+    <span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;top&quot;</span>) +
+  <span class="kw">labs</span>(<span class="dt">title=</span><span class="kw">paste</span>(<span class="st">&quot;Indicator mapped is &quot;</span>,
+                    <span class="kw">as.character</span>(dat[<span class="dv">1</span>, <span class="st">&quot;indicator&quot;</span>]),
+                    <span class="dt">sep=</span><span class="st">&quot;&quot;</span>))</code></pre>
+<figure>
+<img src="figure/ExampleQogSpatial.png" alt="plot of chunk ExampleQogSpatial"><figcaption>plot of chunk ExampleQogSpatial</figcaption>
+</figure>
+</section>
+<section class="level3" id="stata-package">
+<h3>STATA-package</h3>
+<p><em>Christoph Thewes, from University of Potsdam</em> has already written a package for STATA users. <a href="http://www.qog.pol.gu.se/data/dataextras/forstatausers/">See details from QoG website</a></p>
+<hr>
+<center>
+© Markus Kainu 2013
+</center>
+
+
+
+
+</section>
+</section>
+
+
+</div>
+
+

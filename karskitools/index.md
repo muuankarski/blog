@@ -1,6 +1,13 @@
-## Introduction
+---
+layout: default
+title: karskitools
+---
 
-**karskitools**-package: Collection of functions to facilitate reproducible analysis with R, knitr and pandoc
+## karskitools-package for R
+
+*Collection of functions to facilitate reproducible analysis with R, knitr and pandoc*
+
+
 
 ## Installation
 
