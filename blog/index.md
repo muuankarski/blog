@@ -12,8 +12,8 @@ I will write here mainly about how R language can be applied in social science r
 
 <div id="posts">
 
-<p>Blog RSS here: <a title="blog RSS" href="http://markuskainu.fi/blog/feed.xml">
-                    <i class="icon-rss"></i></a></p>
+Blog RSS here: <a title="blog RSS" href="http://easterneurope.github.io/feed.xml">
+                    <i class="fa fa-rss-square fa-2x"></i></a>
 
 
     {% for post in site.posts offset: 0 limit: 10 %}
@@ -29,7 +29,7 @@ I will write here mainly about how R language can be applied in social science r
 
 <div style="margin: 15px 0; padding-top: 5px;">
 <small>
-    <a href="/blog/archive.html" title="an archive of all posts">&larr; More posts</a>
+    <a href="/archive.html" title="an archive of all posts">&larr; More posts</a>
 </small>
 </div>
 
